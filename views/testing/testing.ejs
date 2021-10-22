@@ -64,7 +64,7 @@
         }
         </script>
         <script> //SLOBS
-
+        import {SlobsClient} from 'slobs-client';
             //     axios.get('https://streamlabs.com/api/v1.0/authorize', {
             //     params : {
             //         response_type : 'code',
@@ -85,6 +85,8 @@
             //     // always executed
             // });
             function slobstoken(){
+                let params = new URLSearchParams(location.search);
+                let acode = params.get('code');
             axios.post('https://streamlabs.com/api/v1.0/token', 
             {
                 params : {                    
@@ -133,7 +135,7 @@
                     response_type : 'code',
                     client_id : '1rnzFihkHYQ7hsOvgveBmxyJYs9vKRaTrmK0rDf4',
                     redirect_uri : 'http://localhost:8080',
-                    scope : 'legacy.token'
+                    scope : 'profiles.write'
                     }
                 })
             .then(function (response) {
@@ -147,6 +149,50 @@
             .then(function () {
                 // always executed
             });
+        }
+        function slobsalert() {
+            axios.post('https://streamlabs.com/api/v1.0/alerts', {
+                params : {
+                    access_token : '9F48E0584828E58B63DA',
+                    type : 'follow'
+                    }
+                })
+            .then(function (response) {
+                // handle success
+                console.log(response);
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+            .then(function () {
+                // always executed
+            });
+        }
+
+        
+
+        const main = async() => {
+            // connect and authenticate
+            const client = await SlobsClient.connect('http://127.0.0.1:59650/api', '1f73d5125294ecb1f15dfa3f491836e54c171e5');
+
+            // get a list of scenes
+            const scenes = await client.request('ScenesService', 'getScenes');
+            console.log('list of scenes', scenes);
+
+            // set volume of all current scene audio sources
+            const audioSources = await client.request('AudioService', 'getSourcesForCurrentScene');
+
+            for (let i = 0; i < audioSources.length; ++i) {
+            // set the deflection (volume) to half
+            await client.request(audioSources[i].resourceId, 'setDeflection', 1.0);
+            }
+
+            // subscribe to events
+            // await client.subscribe('ScenesService', 'sceneSwitched', (activeScene: any) => {
+            // console.log('scene switch event', activeScene);
+            // });
+
         }
         </script>
 	</head>
@@ -169,9 +215,9 @@
 					<button class="btn btn-1 btn-1c">Button</button>
 				</p>
 				<p>
-					<button class="btn btn-1 btn-1d" onclick="slobsuser()">test API</button>
+					<button class="btn btn-1 btn-1d" onclick="slobsuser()">show user</button>
 					<button class="btn btn-1 btn-1e" onclick="slobsauth()">authenticate API</button>
-					<button class="btn btn-1 btn-1f">Button</button>
+					<button class="btn btn-1 btn-1f" onclick="slobsalert()">show alerts</button>
 				</p>
 			</section>
 			<section class="color-2">
