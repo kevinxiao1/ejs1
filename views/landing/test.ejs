@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- <script type="text/javascript" src="../../node_modules/obs-websocket-js/dist/obs-websocket.js"></script> -->
+    <!-- <script src="/javascript/obs.js"></script>
+    <script src="/javascript/function.js"></script> -->
+    <script src="/javascript/bundle.js"></script>
+    <script>
+        var jquery = require('jquery');
+        var OBSWebSocket = require('obs-websocket-js')
+        var func = require('functmodule');
+    </script>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+
+        // SAMPLE CONNECT AND REQUEST
+        var module = require('obs-module');
+        const obs = new OBSWebSocket();
+        obs.connect({
+            address: 'localhost:4444',
+            password: 'kw912049'
+        })
+        .then(() => {
+            console.log(`Success! We're connected & authenticated.`);
+
+            return obs.send('GetSceneList');
+        })
+        .then(data => {
+            console.log(`${data.scenes.length} Available Scenes!`);
+
+            data.scenes.forEach(scene => {
+                if (scene.name !== data.currentScene) {
+                    console.log(`Found a different scene! Switching to Scene: ${scene.name}`);
+
+                    obs.send('SetCurrentScene', {
+                        'scene-name': scene.name
+                    });
+                }
+            });
+        })
+        .catch(err => { // Promise convention dicates you have a catch on every chain.
+            console.log(err);
+        });
+
+        obs.on('SwitchScenes', data => {
+            console.log(`New Active Scene: ${data.sceneName}`);
+        });
+
+            // You must add this handler to avoid uncaught exceptions.
+            obs.on('error', err => {
+                console.error('socket error:', err);
+        });
+
+        function con() {
+            obs.send('GetSceneList').then(data => {
+                const sceneListDiv = document.getElementById('scene_list');
+
+                data.scenes.forEach(scene => {
+                    const sceneElement = document.createElement('button');
+                    sceneElement.textContent = scene.name;
+                    sceneElement.onclick = function() {
+                    obs.send('SetCurrentScene', {
+                        'scene-name': scene.name
+                    });
+                    };
+
+                    sceneListDiv.appendChild(sceneElement);
+                });
+                })
+        }
+    </script>
+  </head>
+  <body>
+
+    <div class="container">
+        <div class="row">
+            <div class="input-field col s12">
+                <select class="browser-default" onselect="generate()">
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="1">4x4</option>
+                    <option value="2">5x5</option>
+                    <option value="3">6x6</option>
+                </select>
+            </div>
+            <div class="col s12">This div is 12-columns wide on all screen sizes</div>
+            <div class="col s6">6-columns (one-half)</div>
+            <div class="col s6">6-columns (one-half)</div>
+        </div>
+
+        <h1>Scene List</h1>
+        <div id="scene_list"></div>
+        <div><button onclick="createButton()">create</button></div>
+        <div><button onclick="con()">connect</button></div>
+    </div>
+  </body>
+</html>
