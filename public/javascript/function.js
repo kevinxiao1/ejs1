@@ -1,7 +1,3 @@
-const Pizzicato = require('pizzicato')
-const Axios = require('axios')
-
-
 
 //////////////////////////// PIZZICATO FUNCTIONS
 

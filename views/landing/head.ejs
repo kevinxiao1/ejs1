@@ -1,0 +1,364 @@
+<title>Prototype</title>
+    <meta charset="UTF-8">
+        <script src="/javascript/bundle.js"></script>
+        <script>
+            var jquery = require('jquery');
+            var OBSWebSocket = require('obs-websocket-js')
+            var express = require('express')
+            var app = express()
+            var router = express.Router();
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="./css/design.css">
+
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+        <!-- Compiled and minified JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzicato/0.6.4/Pizzicato.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+        body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+        .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+        .fa-anchor,.fa-coffee {font-size:200px}
+        .ww {
+            word-wrap: break-word;
+        }
+    </style>
+
+    <script> //PIZZICATO ---------------------------------------------------------------
+        var count = 0;
+        var sawtoothWave = new Pizzicato.Sound({ 
+        source: 'wave',
+        options: {
+            type: 'sawtooth',
+            volume : 0.05
+        }
+        });
+
+        function volumechange() {
+            var vol = document.getElementById('volume').value
+            sawtoothWave.volume = vol / 1000;
+        }
+
+        function test() {
+            // var stat = sawtoothWave
+            // stat.on('play', function() {
+            //     stat.pause();
+            //     console.log('paused')
+            // })
+            // stat.on('pause', function() {
+            //     stat.play();
+            //     console.log('played')
+            // })
+            // console.log('clicked')
+            // console.log(sawtoothWave)
+
+            var button = document.getElementsByClassName('btn-testplay')[0].value
+            console.log(button)
+
+            if (button == 'false' || count == 0) {
+                sawtoothWave.play()
+                document.getElementsByClassName('btn-testplay')[0].value = 'true'
+                console.log(document.getElementsByClassName('btn-testplay')[0].value)
+                count++
+            }
+            else{
+                sawtoothWave.pause()
+                document.getElementsByClassName('btn-testplay')[0].value = 'false'
+                console.log(document.getElementsByClassName('btn-testplay')[0].value)
+                count++
+            }
+        }
+
+        // file play
+        var sound = new Pizzicato.Sound({ 
+            source: 'file',
+            options: { 
+                path: '/audio/what.mp3' ,
+                volume : 0.5,
+                attack : 0,
+                release : 0,
+
+            }
+        }, function() {
+            
+            console.log('sound file loaded!');
+        });
+
+        function fvolumechange() {
+            var vol = document.getElementById('fvolume').value
+            sound.volume = vol / 1000;
+        }
+
+        function fplay() {
+            sound.play()
+        }
+        function fpause() {
+            sound.pause()
+        }
+        function fstop() {
+            sound.stop()
+        }
+
+        // effects
+        var decount = false
+        var dicount = false
+        var edelay = new Pizzicato.Effects.Delay({
+            feedback: 0.1,
+            time: 1,
+            mix: 0.6
+        });
+
+        var edistort = new Pizzicato.Effects.Distortion({
+        });
+        function delay() {
+            if (decount == false) {
+                
+                sound.addEffect(edelay);
+                decount = true;
+            }
+            else{
+                sound.removeEffect(edelay)
+                decount = false
+            }
+            
+        }
+        function distort() {
+           if (dicount == false) {
+                sound.addEffect(edistort);
+                dicount = true;
+           }
+           else{
+               sound.removeEffect(edistort)
+               dicount = false;
+           }
+        }
+
+        function dischange() {
+            var ngain = document.getElementById('dgain').value
+            sound.removeEffect(edistort)
+            ngain = ngain / 100
+            edistort = new Pizzicato.Effects.Distortion({
+                gain : ngain
+            });
+            sound.addEffect(edistort)
+        }
+
+        // voice and effects 
+        // var voice = new Pizzicato.Sound({
+        //     source: 'input',
+        //     options: { volume: 0.7 }
+        // });
+
+        // function vplay(params) {
+        //     voice.play();
+        // }
+    </script>
+
+    <script> // OBS WEBSOCKET -----------------------------------------------------------------
+         // SAMPLE CONNECT AND REQUEST
+         var module = require('obs-module');
+        const obs = new OBSWebSocket();
+        obs.connect({
+            address: 'localhost:4444',
+            password: 'kw912049'
+        })
+        .then(() => {
+            console.log(`Success! We're connected & authenticated.`);
+            return obs.send('GetSourcesList');
+        })
+            .then(data =>{
+                data.sources.forEach(source => {
+                    console.log(`new source! its ${source.name}`)  
+                })
+            })
+        // .then(data => {
+        //     console.log(`${data.scenes.length} Available Scenes!`);
+
+        //     data.scenes.forEach(scene => {
+        //         if (scene.name !== data.currentScene) {
+        //             console.log(`Found a different scene! Switching to Scene: ${scene.name}`);
+
+        //             obs.send('SetCurrentScene', {
+        //                 'scene-name': scene.name
+        //             });
+        //         }
+        //     });
+        // })
+        .catch(err => { // Promise convention dicates you have a catch on every chain.
+            console.log(err);
+        });
+
+        obs.on('SwitchScenes', data => {
+            console.log(`New Active Scene: ${data.sceneName}`);
+        });
+
+            // You must add this handler to avoid uncaught exceptions.
+            obs.on('error', err => {
+                console.error('socket error:', err);
+        });
+
+
+        // SCENE SWITCHER -------------------------------
+        function con() {
+            obs.send('GetSceneList').then(data => {
+                const sceneListDiv = document.getElementById('scene_list');
+
+                data.scenes.forEach(scene => {
+                    const sceneElement = document.createElement('button');
+                    sceneElement.textContent = scene.name;
+                    sceneElement.onclick = function() {
+                    obs.send('SetCurrentScene', {
+                        'scene-name': scene.name
+                    });
+                    };
+
+                    sceneListDiv.appendChild(sceneElement);
+                });
+                })
+        }
+
+        // DECK PROTOTYPE FUNCTIONS --------------------------
+
+        // Stream Start and Stop
+        function streamstart() {
+            obs.sendCallback('StartStreaming', (error) => {
+            // Code here...
+                console.log('stream started')
+            });
+            obs.on('error', err => {
+                console.error('socket error:', err);
+            });
+        }
+        function streamstop() {
+            obs.sendCallback('StopStreaming', (error) => {
+            // Code here...
+                console.log('stream stopped')
+            });
+            obs.on('error', err => {
+                console.error('socket error:', err);
+            });
+        }
+
+        // Record Start and Stop
+
+        function recstart() {
+            obs.sendCallback('StartRecording', (error) => {
+            // Code here...
+                console.log('record started')
+            });
+            obs.on('error', err => {
+                console.error('socket error:', err);
+            });
+        }
+        function recstop() {
+            obs.sendCallback('StopRecording', (error) => {
+            // Code here...
+                console.log('record stopped')
+            });
+            obs.on('error', err => {
+                console.error('socket error:', err);
+            });
+        }
+
+        function rec() {
+            obs.sendCallback('StartStopRecording', (error) => {
+            // Code here...
+                obs.send('GetRecordingStatus').then(data => {
+                    const button = document.getElementById('rec')
+                    if (data.isRecording == false) {
+                        button.className += "pulse"
+                        console.log('record started')
+                    }
+                    else{
+                        button.classList.remove("pulse")
+                        console.log('record stopped')
+                    }
+                    console.log(data.isRecording)
+                })
+                if (error) {
+                    console.error(error)
+                }
+            });
+
+        }
+
+
+        // Mic Toggle
+        function togglemic() {
+            obs.send('ToggleMute',{source: 'Mic/Aux'}).then(() => {
+                obs.on('SourceMuteStateChanged', data => {
+                    if (data.muted == true) {
+                        console.log('mic muted')
+                    }
+                    else {
+                        console.log('mic not muted')
+                    }
+                })
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+        
+        // Media play
+        function vsauce() {
+            obs.send('RestartMedia',{sourceName: 'vsauce'}).then(() => {
+                console.log('vsauce')
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        function etu() {
+            obs.send('RestartMedia',{sourceName: 'etu'}).then(() => {
+                console.log('etu')
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        function end() {
+            obs.send('RestartMedia',{sourceName: 'end'}).then(() => {
+                console.log('etu')
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+        function punch() {
+            obs.send('RestartMedia',{sourceName: 'punch'}).then(() => {
+                console.log('etu')
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+
+        // LANDING PAGE ------------------------------------
+        function redirect(id) {
+            if (id == 'scenes') {
+                console.log(id)
+                router.get('/scenes', function (req, res) {
+                    res.render('landing/scenes')
+                })
+
+            }
+            else if (id == 'mixer') {
+                console.log(id)
+                router.get('/scenes', function (req, res) {
+                    res.render('landing/mixer')
+                })
+            }
+            else if (id == 'deck') {
+                console.log(id)
+                router.get('/scenes', function (req, res) {
+                    res.render('landing/sdeck')
+                })
+            }
+        }
+    </script>

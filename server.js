@@ -1,6 +1,7 @@
 var express = require('express');
 
 var app = express();
+
 // const jsonRouter = require('express-json-rpc-router')
 // const OBSWebSocket = require('obs-websocket-js')
 
@@ -54,7 +55,6 @@ app.get('/', function(req, res) {
   res.render('testing/testing', {
       axios: require('axios')
   });
-  res.header("Access-Control-Allow-Origin","*")
 });
 
 // ABOUT PAGE
@@ -73,7 +73,20 @@ app.get('/test', function(req, res) {
     });
   });
 
-
+  //LANDING PAGE
+  app.get('/scenes', function(req, res) {
+    res.render('landing/scenes', {
+    });
+  });
+  
+  app.get('/mixer', function(req, res) {
+    res.render('landing/mixer', {
+    });
+  });
+  app.get('/deck', function(req, res) {
+    res.render('landing/sdeck', {
+    });
+  });
 app.use(express.json())
 // app.use(jsonRouter({ methods: controller }))
 app.listen(8080);
