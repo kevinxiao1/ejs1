@@ -1,51 +1,13 @@
-var express = require('express');
+const express = require('express');
+const bycrypt = require('bcrypt');
+const app = express();
 
-var app = express();
-
-// const jsonRouter = require('express-json-rpc-router')
-// const OBSWebSocket = require('obs-websocket-js')
-
-
-// // WEBSOCKET TEST CONNECT
-// const obs = new OBSWebSocket();
-// obs.connect({
-//     address: 'localhost:4444',
-//     password: 'kw912049'
-// })
-// .then(() => {
-//     console.log(`Success! We're connected & authenticated.`);
-
-//     return obs.send('GetSceneList');
-// })
-// .then(data => {
-//     console.log(`${data.scenes.length} Available Scenes!`);
-
-//     data.scenes.forEach(scene => {
-//         if (scene.name !== data.currentScene) {
-//             console.log(`Found a different scene! Switching to Scene: ${scene.name}`);
-
-//             obs.send('SetCurrentScene', {
-//                 'scene-name': scene.name
-//             });
-//         }
-//     });
-// })
-// .catch(err => { // Promise convention dicates you have a catch on every chain.
-//     console.log(err);
-// });
-
-// obs.on('SwitchScenes', data => {
-// console.log(`New Active Scene: ${data.sceneName}`);
-// });
-
-// // You must add this handler to avoid uncaught exceptions.
-// obs.on('error', err => {
-// console.error('socket error:', err);
-// });
+const users = [];
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
+app.use(express.urlencoded({extended: false}))
 
 // use res.render to load up an ejs view file
 
@@ -64,8 +26,33 @@ app.get('/about', function(req, res) {
 
 // LOGIN PAGE
 app.get('/login', function(req, res) {
-    res.render('login/login');
+    res.render('login/login.ejs');
   });
+
+// LOGIN POST
+
+
+// REGISTER PAGE
+app.get('/register', function(req, res) {
+    res.render('login/register.ejs');
+  });
+// REGISTER POST
+app.post('/register', async(req,res) => {
+    try {
+        const hashedPassword = await bycrypt.hash(req.body.password, 10)
+        users.push({
+            id: Date.now().toString(),
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword,
+        })
+        res.redirect('/login');
+    } catch (error) {
+        res.redirect('/register');
+    }
+    console.log(users);
+})
+
 
 // TESTER LANDING PAGE
 app.get('/test', function(req, res) {
@@ -83,10 +70,13 @@ app.get('/test', function(req, res) {
     res.render('landing/mixer', {
     });
   });
-  app.get('/deck', function(req, res) {
+  app.get('/sdeck', function(req, res) {
     res.render('landing/sdeck', {
     });
   });
+
+
+
 app.use(express.json())
 // app.use(jsonRouter({ methods: controller }))
 app.listen(8080);

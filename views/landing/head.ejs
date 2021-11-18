@@ -142,13 +142,16 @@
         }
 
         function dischange() {
-            var ngain = document.getElementById('dgain').value
-            sound.removeEffect(edistort)
-            ngain = ngain / 100
-            edistort = new Pizzicato.Effects.Distortion({
-                gain : ngain
-            });
-            sound.addEffect(edistort)
+            if (dicount == true) {
+                var ngain = document.getElementById('dgain').value
+                sound.removeEffect(edistort)
+                ngain = ngain / 100
+                edistort = new Pizzicato.Effects.Distortion({
+                    gain : ngain
+                });
+                sound.addEffect(edistort)
+            }
+            
         }
 
         // voice and effects 
@@ -164,7 +167,7 @@
 
     <script> // OBS WEBSOCKET -----------------------------------------------------------------
          // SAMPLE CONNECT AND REQUEST
-         var module = require('obs-module');
+        var module = require('obs-module');
         const obs = new OBSWebSocket();
         obs.connect({
             address: 'localhost:4444',
@@ -172,6 +175,18 @@
         })
         .then(() => {
             console.log(`Success! We're connected & authenticated.`);
+            obs.send('GetSceneList').then(data => {
+                const sceneListDiv = document.getElementById('stran_list');
+
+                data.scenes.forEach(scene => {
+                    const sceneElement = document.createElement('option');
+                    sceneElement.textContent = scene.name;
+                    sceneElement.id = scene.name;
+                    sceneElement.value = scene.name;
+
+                    sceneListDiv.appendChild(sceneElement);
+                });
+            })
             return obs.send('GetSourcesList');
         })
             .then(data =>{
@@ -222,7 +237,7 @@
 
                     sceneListDiv.appendChild(sceneElement);
                 });
-                })
+            })
         }
 
         // DECK PROTOTYPE FUNCTIONS --------------------------
@@ -333,11 +348,58 @@
         }
         function punch() {
             obs.send('RestartMedia',{sourceName: 'punch'}).then(() => {
-                console.log('etu')
+                console.log('punch')
             }).catch((error) => {
                 console.error(error);
             });
         }
+
+
+        // ADD SCENE
+
+        function tscenelist() {
+            obs.send('GetSceneList').then(data => {
+                const sceneListDiv = document.getElementById('stran_list');
+
+                data.scenes.forEach(scene => {
+                    const sceneElement = document.createElement('option');
+                    sceneElement.textContent = scene.name;
+                    sceneElement.id = scene.name;
+
+                    sceneListDiv.appendChild(sceneElement);
+                });
+            })
+        }
+
+        function addscene() {
+            const list = document.getElementById('stran_list')
+            const text = list.options[list.selectedIndex].value;
+            const box = document.getElementById('deckadd');
+
+            const div = document.createElement('div');
+            div.classList.add('col','s4','m4','l4')
+
+            const sceneButton = document.createElement('button');
+
+            sceneButton.textContent = text;
+            sceneButton.classList.add('waves-effect', 'waves-light')
+            // sceneButton.onclick
+            alert(text);
+
+            sceneButton.onclick = function() {
+                obs.send('SetCurrentScene', {
+                    'scene-name': text
+                });
+            }
+
+            box.appendChild(div);
+            div.appendChild(sceneButton);
+        }
+
+
+        // ADD MEDIA
+
+
 
         // LANDING PAGE ------------------------------------
         function redirect(id) {
