@@ -5,11 +5,12 @@
             var jquery = require('jquery');
             var OBSWebSocket = require('obs-websocket-js')
             var express = require('express')
-            var app = express()
-            var router = express.Router();
+            // var app = express()
+            // var router = express.Router();
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="./css/design.css">
+    <link rel="stylesheet" href="./css/buttondrag.css">
 
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -17,6 +18,7 @@
         <!-- Compiled and minified JavaScript -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzicato/0.6.4/Pizzicato.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -30,9 +32,30 @@
         .ww {
             word-wrap: break-word;
         }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            background-color: #2196F3;
+            padding: 10px;
+        }
+        .grid-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+        }
     </style>
 
-    <script> //PIZZICATO ---------------------------------------------------------------
+    <script> 
+
+        const inithowl = require('howl-module');
+        // HOWLER.JS
+        
+
+
+        //PIZZICATO ---------------------------------------------------------------
         var count = 0;
         var sawtoothWave = new Pizzicato.Sound({ 
         source: 'wave',
@@ -60,21 +83,27 @@
             // console.log('clicked')
             // console.log(sawtoothWave)
 
-            var button = document.getElementsByClassName('btn-testplay')[0].value
-            console.log(button)
+            // var button = document.getElementsByClassName('btn-testplay')[0].value
+            // console.log(button)
 
-            if (button == 'false' || count == 0) {
-                sawtoothWave.play()
-                document.getElementsByClassName('btn-testplay')[0].value = 'true'
-                console.log(document.getElementsByClassName('btn-testplay')[0].value)
-                count++
-            }
-            else{
-                sawtoothWave.pause()
-                document.getElementsByClassName('btn-testplay')[0].value = 'false'
-                console.log(document.getElementsByClassName('btn-testplay')[0].value)
-                count++
-            }
+            // if (button == 'false' || count == 0) {
+            //     sawtoothWave.play()
+            //     document.getElementsByClassName('btn-testplay')[0].value = 'true'
+            //     console.log(document.getElementsByClassName('btn-testplay')[0].value)
+            //     count++
+            // }
+            // else{
+            //     sawtoothWave.pause()
+            //     document.getElementsByClassName('btn-testplay')[0].value = 'false'
+            //     console.log(document.getElementsByClassName('btn-testplay')[0].value)
+            //     count++
+            // }
+
+            var sound = new Howl({
+                src: ['/audio/what.mp3']
+            });
+
+            sound.play();
         }
 
         // file play
@@ -187,13 +216,31 @@
                     sceneListDiv.appendChild(sceneElement);
                 });
             })
-            return obs.send('GetSourcesList');
+            return obs.send('GetMediaSourcesList');
+            // return obs.send('GetSourceTypesList')
         })
             .then(data =>{
-                data.sources.forEach(source => {
-                    console.log(`new source! its ${source.name}`)  
+                const medialist = document.getElementById('media_list')
+                data.mediaSources.forEach(source => {
+                    console.log(`new source! its ${source.sourceName}`)  
+                    const sceneElement = document.createElement('option');
+                    sceneElement.textContent = source.sourceName;
+                    sceneElement.id = source.sourceName;
+                    sceneElement.value = source.sourceName
+
+                    medialist.appendChild(sceneElement);
                 })
+
             })
+
+            // .then(data =>{
+            //     data.types.forEach(type => {
+            //         if (type.caps.canInteract) {
+            //             console.log(`new source! its ${type.typeId}`)  
+            //         }
+            //     })
+            // })
+
         // .then(data => {
         //     console.log(`${data.scenes.length} Available Scenes!`);
 
@@ -355,8 +402,30 @@
         }
 
 
-        // ADD SCENE
+        // ADD SCENE / MEDIA
 
+        $(document).ready(function() {
+            $('input:radio[name="deckselect"]').change(
+            function(){
+                const trans = document.getElementById('stran_list')
+                const media = document.getElementById('media_list')
+                if (this.checked && this.id == "selecttrans") {
+                    $('#media_list').attr("disabled",true)
+                    $('#mediabutton').attr("disabled",true)
+                    $('#stran_list').attr("disabled",false)
+                    $('#transbutton').attr("disabled",false)
+                    console.log('trans')
+                }
+                else{
+                    $('#media_list').attr("disabled",false)
+                    $('#mediabutton').attr("disabled",false)
+                    $('#stran_list').attr("disabled",true)
+                    $('#transbutton').attr("disabled",true)
+                    console.log('media')
+                }
+            });
+        })
+            
         function tscenelist() {
             obs.send('GetSceneList').then(data => {
                 const sceneListDiv = document.getElementById('stran_list');
@@ -399,28 +468,99 @@
 
         // ADD MEDIA
 
+        function addmedia() {
+            const list = document.getElementById('media_list')
+            const text = list.options[list.selectedIndex].value;
+            const box = document.getElementById('deckadd');
 
+            const div = document.createElement('div');
+            div.classList.add('col','s4','m4','l4')
+
+            const sceneButton = document.createElement('button');
+
+            sceneButton.textContent = text;
+            sceneButton.classList.add('waves-effect', 'waves-light')
+            // sceneButton.onclick
+            alert(text);
+
+            sceneButton.onclick = function() {
+                obs.send('RestartMedia',{sourceName: text}).then(() => {
+                    console.log(text)
+                }).catch((error) => {
+                    console.error(error);
+                });
+            }
+
+            box.appendChild(div);
+            div.appendChild(sceneButton);
+        }
 
         // LANDING PAGE ------------------------------------
-        function redirect(id) {
-            if (id == 'scenes') {
-                console.log(id)
-                router.get('/scenes', function (req, res) {
-                    res.render('landing/scenes')
-                })
+        // function redirect(id) {
+        //     if (id == 'scenes') {
+        //         console.log(id)
+        //         router.get('/scenes', function (req, res) {
+        //             res.render('landing/scenes')
+        //         })
 
+        //     }
+        //     else if (id == 'mixer') {
+        //         console.log(id)
+        //         router.get('/scenes', function (req, res) {
+        //             res.render('landing/mixer')
+        //         })
+        //     }
+        //     else if (id == 'deck') {
+        //         console.log(id)
+        //         router.get('/scenes', function (req, res) {
+        //             res.render('landing/sdeck')
+        //         })
+        //     }
+        // }
+
+        // DRAGABLE BUTTON
+
+        function createButton() {
+        var mousePosition;
+        var offset = [0,0];
+        var div;
+        var isDown = false;
+
+        div = document.createElement("button");
+        div.style.position = "absolute";
+        div.style.left = "0px";
+        div.style.top = "0px";
+        div.style.width = "100px";
+        div.style.height = "100px";
+        div.style.background = "red";
+        div.style.color = "blue";
+
+        document.body.appendChild(div);
+
+        div.addEventListener('mousedown', function(e) {
+            isDown = true;
+            offset = [
+                div.offsetLeft - e.clientX,
+                div.offsetTop - e.clientY
+            ];
+        }, true);
+
+        document.addEventListener('mouseup', function() {
+            isDown = false;
+        }, true);
+
+        document.addEventListener('mousemove', function(event) {
+            event.preventDefault();
+            if (isDown) {
+                mousePosition = {
+
+                    x : event.clientX,
+                    y : event.clientY
+
+                };
+                div.style.left = (mousePosition.x + offset[0]) + 'px';
+                div.style.top  = (mousePosition.y + offset[1]) + 'px';
             }
-            else if (id == 'mixer') {
-                console.log(id)
-                router.get('/scenes', function (req, res) {
-                    res.render('landing/mixer')
-                })
-            }
-            else if (id == 'deck') {
-                console.log(id)
-                router.get('/scenes', function (req, res) {
-                    res.render('landing/sdeck')
-                })
-            }
-        }
+        }, true);
+    }
     </script>

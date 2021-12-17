@@ -3,19 +3,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const express = require('express');
-const bycrypt = require('bcrypt');
+
 const app = express();
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
+const methodOverride = require('method-override');
 
-const initializePassport = require('./passport-config')
-initializePassport(passport, 
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
-);
-
-const users = [];
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -29,12 +23,29 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(methodOverride('_method'));
+
+// LOGOUT METHOD
+app.delete('/logout', (req,res) => {
+    req.logOut()
+    res.redirect('/login')
+})
 
 // use res.render to load up an ejs view file
 
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+    
+    return res.redirect('/login')
+}
+
+
+
 
 // INDEX PAGE
-app.get('/', function(req, res) {
+app.get('/', checkAuthenticated, (req, res) => {
   // res.render('testing/testing', {
   //     axios: require('axios')
   // });
@@ -46,40 +57,6 @@ app.get('/about', function(req, res) {
   res.render('pages/about');
 });
 
-// LOGIN PAGE
-app.get('/login', function(req, res) {
-    res.render('login/login.ejs');
-  });
-
-// LOGIN POST
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
-
-
-// REGISTER PAGE
-app.get('/register', function(req, res) {
-    res.render('login/register.ejs');
-  });
-// REGISTER POST
-app.post('/register', async(req,res) => {
-    try {
-        const hashedPassword = await bycrypt.hash(req.body.password, 10)
-        users.push({
-            id: Date.now().toString(),
-            name: req.body.name,
-            email: req.body.email,
-            password: hashedPassword,
-        })
-        res.redirect('/login');
-    } catch (error) {
-        res.redirect('/register');
-    }
-    console.log(users);
-})
-
 
 // TESTER LANDING PAGE
 app.get('/test', function(req, res) {
@@ -88,8 +65,8 @@ app.get('/test', function(req, res) {
   });
 
   //LANDING PAGE
-  app.get('/scenes', function(req, res) {
-    res.render('landing/scenes', {
+  app.get('/proto1', function(req, res) {
+    res.render('landing/proto1', {
     });
   });
   
@@ -102,9 +79,18 @@ app.get('/test', function(req, res) {
     });
   });
 
+// DATABASE CONNECTION
+
 
 
 app.use(express.json())
 // app.use(jsonRouter({ methods: controller }))
+
+// ROUTERS
+const userRouter = require('./routes/login')
+const deckRouter = require('./routes/deck')
+app.use(userRouter)
+app.use(deckRouter)
+
 app.listen(8080);
 console.log('Server is listening on port 8080');

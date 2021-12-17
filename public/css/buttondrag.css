@@ -1,0 +1,11 @@
+#drag {
+    position: absolute;
+    z-index: 9;
+    text-align: center;
+  }
+  
+  #dragheader {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+  }
