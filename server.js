@@ -52,6 +52,13 @@ app.get('/', checkAuthenticated, (req, res) => {
   res.render('pages/index.ejs', {name : req.user.name})
 });
 
+app.get('/test', (req, res) => {
+    // res.render('testing/testing', {
+    //     axios: require('axios')
+    // });
+    res.render('testing/dragreplace.ejs')
+  });
+
 // ABOUT PAGE
 app.get('/about', function(req, res) {
   res.render('pages/about');

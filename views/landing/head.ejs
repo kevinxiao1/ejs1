@@ -440,6 +440,9 @@
             })
         }
 
+        // ADD SCENES AND MEDIA
+        var btncount = 0;
+
         function addscene() {
             const list = document.getElementById('stran_list')
             const text = list.options[list.selectedIndex].value;
@@ -447,8 +450,15 @@
 
             const div = document.createElement('div');
             div.classList.add('col','s4','m4','l4')
+            div.setAttribute('ondrop', 'drop(event)')
+            div.setAttribute('ondragover', 'allowDrop(event)')
+            div.setAttribute('id', 'div' + (btncount + 1))
+
 
             const sceneButton = document.createElement('button');
+            sceneButton.setAttribute('id', 'drag' + (btncount + 1))
+            sceneButton.setAttribute('draggable', 'true')
+            sceneButton.setAttribute('ondragstart', 'drag(event)')
 
             sceneButton.textContent = text;
             sceneButton.classList.add('waves-effect', 'waves-light')
@@ -463,6 +473,7 @@
 
             box.appendChild(div);
             div.appendChild(sceneButton);
+            btncount = btncount + 1;
         }
 
 
@@ -475,8 +486,15 @@
 
             const div = document.createElement('div');
             div.classList.add('col','s4','m4','l4')
+            //div.style.position = 'absolute';
+            div.setAttribute('ondrop', 'drop(event)')
+            div.setAttribute('ondragover', 'allowDrop(event)')
+            div.setAttribute('id', 'div' + (btncount + 1))
 
             const sceneButton = document.createElement('button');
+            sceneButton.setAttribute('id', 'drag' + (btncount + 1))
+            sceneButton.setAttribute('draggable', 'true')
+            sceneButton.setAttribute('ondragstart', 'drag(event)')
 
             sceneButton.textContent = text;
             sceneButton.classList.add('waves-effect', 'waves-light')
@@ -494,6 +512,26 @@
             box.appendChild(div);
             div.appendChild(sceneButton);
         }
+
+        function allowDrop (ev) {
+            ev.preventDefault();
+        }
+
+        function drag (ev) {
+            ev.dataTransfer.setData ("src", ev.target.id);
+        }
+
+        function drop (ev) {
+            ev.preventDefault ();
+            var src = document.getElementById (ev.dataTransfer.getData ("src"));
+            var srcParent = src.parentNode;
+            var tgt = ev.currentTarget.firstElementChild;
+
+            ev.currentTarget.replaceChild (src, tgt);
+            srcParent.appendChild (tgt);
+        }
+
+        
 
         // LANDING PAGE ------------------------------------
         // function redirect(id) {

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style type="text/css">
+            #div1 {
+                width:350px;
+                height:70px;
+                padding:10px;
+                border:1px solid #aaaaaa;
+            }
+            #div2 {
+                width:350px;
+                height:70px;
+                padding:10px;
+                border:1px solid #aaaaaa;
+            }
+        </style>
+        <script>
+            function allowDrop (ev) {
+                ev.preventDefault();
+            }
+
+            function drag (ev) {
+                ev.dataTransfer.setData ("src", ev.target.id);
+            }
+
+            function drop (ev) {
+                ev.preventDefault ();
+                var src = document.getElementById (ev.dataTransfer.getData ("src"));
+                var srcParent = src.parentNode;
+                var tgt = ev.currentTarget.firstElementChild;
+
+                ev.currentTarget.replaceChild (src, tgt);
+                srcParent.appendChild (tgt);
+            }
+        </script>
+    </head>
+    
+    <body>
+        <div id="div1" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <!-- <img id="drag1" src="img_logo.gif" draggable="true" ondragstart="drag(event)" width="336" height="69"> -->
+            <button id="drag1" src="img_logo.gif" draggable="true" ondragstart="drag(event)">test 1</button>
+        </div>
+        <br>
+        <div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <!-- <img id="drag1" src="img_logo.gif" draggable="true" ondragstart="drag(event)" width="236" height="49"> -->
+            <button id="drag2" src="img_logo.gif" draggable="true" ondragstart="drag(event)">test2</button>
+        </div>
+    </body>
