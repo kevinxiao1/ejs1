@@ -10,20 +10,44 @@ const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
 
+// var options = {
+// 	host: 'localhost',
+// 	port: 3306,
+// 	user: 'root',
+// 	password: '',
+// 	database: 'livebuddy'
+// };
+
+// var connection = mysql.createConnection(options); // or mysql.createPool(options);
+// var sessionStore = new MySQLStore({}/* session store options */, connection);
+
+// document.cookie = 'sessionViews=0; expires' + new Date(9999, 0 , 1).toUTCString();
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({extended: false}))
 app.use(flash())
+app.set('trust proxy', 1)
 app.use(session({
-  secret : process.env.SESSION_SECRET,
-  resave : false,
-  saveUninitialized : false
+    key : 'session_cookie_name',
+    secret : process.env.SESSION_SECRET,
+    // store : sessionStore,
+    resave : false,
+    saveUninitialized : false,
 }))
+
+// var sessionStore = new MySQLStore(options);
+
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'));
+// app.set('trust proxy', 1) // trust first proxy
+
+// app.use(cookieSession({
+//     name: 'session',
+//     keys: ['key1', 'key2']
+// }))
 
 // LOGOUT METHOD
 app.delete('/logout', (req,res) => {
@@ -36,8 +60,7 @@ app.delete('/logout', (req,res) => {
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next()
-    }
-    
+    } 
     return res.redirect('/login')
 }
 
@@ -49,7 +72,16 @@ app.get('/', checkAuthenticated, (req, res) => {
   // res.render('testing/testing', {
   //     axios: require('axios')
   // });
-  res.render('pages/index.ejs', {name : req.user.name})
+  if (req.session.views) {
+    req.session.views++
+  } else {
+    req.session.views = 1
+  }
+  console.log(req.session);
+  //res.render('pages/index.ejs', {name : req.user.name})
+  res.render('landing/deck', {name : req.user.name})
+//   req.session.views = (req.session.views + 'views')
+//   res.end(req.session.views + 'views')
 });
 
 app.get('/test', (req, res) => {
@@ -85,9 +117,6 @@ app.get('/test', function(req, res) {
     res.render('landing/sdeck', {
     });
   });
-
-// DATABASE CONNECTION
-
 
 
 app.use(express.json())

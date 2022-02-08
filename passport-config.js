@@ -30,6 +30,8 @@ const con = require('./model/user');
                 return done(null, false, {message : 'no user with the email'}); // req.flash is the way to set flashdata using connect-flash
             } 
 
+            //if user is found but not confirmed
+
 			
 			// if the user is found but the password is wrong
             if (!( await bcrypt.compare(password, rows[0].password)))

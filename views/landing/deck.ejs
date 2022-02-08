@@ -3,7 +3,7 @@
     <head>
         <%- include('./head'); %>
     </head>
-<body>
+<body onload="checkCookie()">
 
 <div class="container">
     
@@ -39,7 +39,7 @@
                 <div class="col s2 m2 l2">
                     <p>
                         <label>
-                          <input class="with-gap radiodeck" name="deckselect" type="radio" onclick="selectadd()" id="selecttrans" checked/>
+                          <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selecttrans" checked/>
                           <span>Add Transition</span>
                         </label>
                     </p>
@@ -58,7 +58,7 @@
                 <div class="col s2 m2 l2">
                     <p>
                         <label>
-                          <input class="with-gap radiodeck" name="deckselect" type="radio" onclick="selectadd()" id="selectmedia"/>
+                          <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selectmedia"/>
                           <span>Add Media Play</span>
                         </label>
                     </p>
@@ -86,7 +86,7 @@
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div> -->
             </div>
             <div class="row">
-                <div><button onclick="createButton()">create</button></div>
+                <!-- <div><button onclick="createButton()">create</button></div> -->
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="punch()">punch</a></div> -->
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="etu()">ETU</a></div> -->
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="end()">ending</a></div> -->
