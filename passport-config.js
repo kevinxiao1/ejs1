@@ -4,7 +4,7 @@ const con = require('./model/user');
 
  function initialize(passport) {
     const authenticateUser = async (email, password, done) => {
-
+        
         passport.serializeUser((user, done) => done(null, user))
         passport.deserializeUser((user, done) => {
             return done(null,user)
@@ -29,7 +29,7 @@ const con = require('./model/user');
 			 if (!rows.length) {
                 return done(null, false, {message : 'no user with the email'}); // req.flash is the way to set flashdata using connect-flash
             } 
-
+            
             //if user is found but not confirmed
 
 			

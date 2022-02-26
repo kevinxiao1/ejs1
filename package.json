@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "node-sass --watch scss -o css"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "jquery": "^3.6.0",
     "method-override": "^3.0.0",
     "mysql": "^2.18.1",
+    "node-sass": "^7.0.1",
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.15",
     "obs-websocket-js": "^4.0.3",

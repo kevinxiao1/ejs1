@@ -26,6 +26,7 @@
         <h1 class="w3-margin w3-jumbo">Prototype</h1>
         <p class="w3-xlarge">Scene Switcher</p>
         <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" onclick="con()">Connect</button>
+        <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" onclick="openpreview()">Open Preview</button>
         <div id="scene_list"></div>
         <div id="demo"></div>
     </header>
@@ -153,8 +154,12 @@
                     <button class="waves-effect waves-light fplay" onclick="fstop()">Stop File</button>
                 </div>
                 <div class="col s3">volume<input id="fvolume" type="range" min="0" max="1000" name="" oninput="fvolumechange()"/></div>
+                
             </div>
             <div class="row">
+                <div class="col s12">
+                    <button class="waves-effect waves-light fplay" onclick="mic()">Mic test</button>
+                </div>
                 <!-- <div class="col s12">
                     <h5 class="w3-padding-32">Play Voice</h5>
                 </div>
@@ -171,11 +176,47 @@
 
                 
             </div>
+
+            <div class="row">
+                <div class="col s3">
+                    <button class="waves-effect waves-light fplay" onclick="delay()">toggle delay</button>
+                </div>
+                <div class="col s3">
+                    <button class="waves-effect waves-light fplay" onclick="distort()">toggle distortion</button>
+                </div>
+                
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                    Distortion Gain<input id="dgain" type="range" min="0" max="1000" name="" oninput="dischange()"/>
+                </div>
+            </div>
             
-            <button class="waves-effect waves-light fplay" onclick="delay()">toggle delay</button>
-            <button class="waves-effect waves-light fplay" onclick="distort()">toggle distortion</button>
-            <div class="col s3">Distortion Gain<input id="dgain" type="range" min="0" max="1000" name="" oninput="dischange()"/></div>
+            <div class="row">
+                <div class="col s5">
+                    <input type="file" id="upload"/>
+                    <!-- <form action="">
+                        <input type="file" accept="audio/*" id="myFile" name="filename">
+                        <input type="submit">
+                    </form> -->
+                    <!-- <input type="file" accept="audio/*">
+                    <audio id="audio" controls>
+                        <source src="" id="src" />
+                    </audio>
+                    <p class="p">The URL of this audio is : </p> -->
+                </div>
+                <div class="col s3">
+                    <audio id="audio" controls>
+                        <source src="" id="src" />
+                    </audio>
+                </div>
+                
+            </div>
+           
+            
         </div>
+        
         </div>
     </div>
 

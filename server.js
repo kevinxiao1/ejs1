@@ -64,7 +64,19 @@ function checkAuthenticated(req, res, next) {
     return res.redirect('/login')
 }
 
-
+// ADMIN PAGE
+app.get('/admin/dashboard', (req, res) => {
+    // res.render('testing/testing', {
+    //     axios: require('axios')
+    // });
+    res.render('admin/dashboard')
+  });
+app.get('/admin/tables', (req, res) => {
+    // res.render('testing/testing', {
+    //     axios: require('axios')
+    // });
+    res.render('admin/tables')
+  });
 
 
 // INDEX PAGE
@@ -72,14 +84,10 @@ app.get('/', checkAuthenticated, (req, res) => {
   // res.render('testing/testing', {
   //     axios: require('axios')
   // });
-  if (req.session.views) {
-    req.session.views++
-  } else {
-    req.session.views = 1
-  }
-  console.log(req.session);
   //res.render('pages/index.ejs', {name : req.user.name})
   res.render('landing/deck', {name : req.user.name})
+
+  //res.render('admin/dashboard', {name : req.user.name})
 //   req.session.views = (req.session.views + 'views')
 //   res.end(req.session.views + 'views')
 });
@@ -98,6 +106,11 @@ app.get('/about', function(req, res) {
 
 
 // TESTER LANDING PAGE
+app.get('/musicplayer', function(req, res) {
+    res.render('testing/musicplayer.ejs', {
+    });
+  });
+
 app.get('/test', function(req, res) {
     res.render('landing/test', {
     });
@@ -125,8 +138,10 @@ app.use(express.json())
 // ROUTERS
 const userRouter = require('./routes/login')
 const deckRouter = require('./routes/deck')
+const adminRouter = require('./routes/admin')
 app.use(userRouter)
 app.use(deckRouter)
+app.use(adminRouter)
 
 app.listen(8080);
 console.log('Server is listening on port 8080');

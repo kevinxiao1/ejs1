@@ -49,17 +49,44 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
         //     email: email,
         //     password: password,
         // })
-        var sql = "INSERT INTO user(name, email, password, functions) VALUES('" + name + "', '" + email + "', '" + password + "', 'function')";
-        con.query(sql, function (err, result) {
+        var sql = "SELECT * FROM `user` WHERE `email` = '" + email + "'";
+        con.query(sql, function (err, result, fields) {
             if (err) throw err;
-            console.log("1 record inserted");
+            console.log("read");
+            if (result.length > 0) {
+                console.log(result)
+                console.log('email already registered')
+                res.redirect('/register');
+            }
+            else{
+                //insert user
+                sql = "INSERT INTO user(name, email, password, functions) VALUES('" + name + "', '" + email + "', '" + password + "', 'function')";
+                con.query(sql, function (err, result) {
+                    if (err) throw err;
+                    console.log("1 record inserted");
+                });
+
+                // generate button database
+                sql = "INSERT INTO user_btn(email) VALUES('" + email + "')";
+                for (let i = 0; i < 12; i++) {
+                    con.query(sql, function (err, result) {
+                        if (err) throw err;
+                        
+                    });
+
+                    if (i == 11) {
+                        console.log("button generated");
+                    }
+                }
+
+                res.redirect('/login');
+            }
         });
-        res.redirect('/login');
+
     } catch (error) {
         res.redirect('/register');
         console.log(error)
     }
-    console.log(users);
 })
 
 

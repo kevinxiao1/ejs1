@@ -4,13 +4,12 @@
         <script>
             var OBSWebSocket = require('obs-websocket-js')
             var express = require('express')
-            // var app = express()
-            // var router = express.Router();
-            
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="./css/design.css">
     <link rel="stylesheet" href="./css/buttondrag.css">
+    <!-- <script src="/javascript/musicplayer.js"></script>
+    <link rel="stylesheet" href="/css/musicplayer.css"> -->
 
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -131,19 +130,21 @@
         }
 
         // file play
-        var sound = new Pizzicato.Sound({ 
-            source: 'file',
-            options: { 
-                path: '/audio/what.mp3' ,
-                volume : 0.5,
-                attack : 0,
-                release : 0,
+        // var sound = new Pizzicato.Sound({ 
+        //     source: 'file',
+        //     options: { 
+        //         path: '/audio/what.mp3' ,
+        //         volume : 0.5,
+        //         attack : 0,
+        //         release : 0,
 
-            }
-        }, function() {
+        //     }
+        // }, function() {
             
-            console.log('sound file loaded!');
-        });
+        //     console.log('sound file loaded!');
+        // });
+
+        
 
         function fvolumechange() {
             var vol = document.getElementById('fvolume').value
@@ -204,9 +205,9 @@
                 });
                 sound.addEffect(edistort)
             }
-            
-        }
+        }  
 
+        
         // voice and effects 
         // var voice = new Pizzicato.Sound({
         //     source: 'input',
@@ -216,6 +217,17 @@
         // function vplay(params) {
         //     voice.play();
         // }
+
+
+        var Element = document.querySelector('input');
+        var img = document.querySelector('source');
+        Element.addEventListener('change', function() {
+            var url = URL.createObjectURL(Element.files[0]);
+            img.src = url;
+            console.log(url);
+            var d=document.querySelector(".p");
+            d.textContent+=url;
+        });
     </script>
 
     <script> // OBS WEBSOCKET -----------------------------------------------------------------
@@ -256,8 +268,17 @@
 
                     medialist.appendChild(sceneElement);
                 })
-
+                return obs.send('GetSourcesList');
+            }).then(data =>{
+                data.sources.forEach(source => {
+                    obs.send('GetMute', {
+                        source: source.name,
+                    }).then(status => {
+                        console.log(source.name + ' is ' + status.muted)
+                    })
+                })
             })
+            
 
             // .then(data =>{
             //     data.types.forEach(type => {
@@ -375,7 +396,6 @@
                     console.error(error)
                 }
             });
-
         }
 
 
@@ -434,11 +454,14 @@
         // Type Selector and Data Reader
 
         $(window).on('load', function() {
+            var context = new AudioContext();
+            context.start()
             
         });
         function foo() {
             alert('This works!');
         }
+        
         
         $(document).ready(function() {
             $('input:radio[name="deckselect"]').change(
@@ -461,8 +484,49 @@
                 }
             });
             readData();
+
+            function handleFiles(event) {
+                var files = event.target.files;
+                $("#src").attr("src", URL.createObjectURL(files[0]));
+                alert(URL.createObjectURL(files[0]))
+                document.getElementById("audio").load();
+
+                var soundfile = URL.createObjectURL(files[0]);
+                var sound = new Pizzicato.Sound({ 
+                    source: 'file',
+                    options: { path: soundfile }
+                }, function() {
+                    alert('sound file loaded!');
+                    sound.play();
+                });
+            }
+           
+
+            document.getElementById("upload").addEventListener("change", handleFiles, false);
             
         })
+
+        function openpreview(){
+            obs.send('OpenProjector', {
+                type: 'Preview',
+                monitor: -1,
+            })
+            console.log('preview')
+        }
+
+        function mic() {
+            var voice = new Pizzicato.Sound({
+                source: 'input',
+                options: { 
+                    volume: 0.8,
+                    detached: 'false', 
+                    }
+            }, () => {
+                voice.play()
+            });
+
+            
+        }
             
         function tscenelist() {
             obs.send('GetSceneList').then(data => {
