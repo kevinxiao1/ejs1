@@ -32,14 +32,12 @@ const con = require('./model/user');
             
             //if user is found but not confirmed
 
-			
 			// if the user is found but the password is wrong
             if (!( await bcrypt.compare(password, rows[0].password)))
                 return done(null, false, {message : 'Password Incorrect'}); // create the loginMessage and save it to session as flashdata
 			
             // all is well, return successful user
             return done(null, rows[0]);			
-		
 		});
 		
     }
