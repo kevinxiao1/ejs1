@@ -67,8 +67,10 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
                 });
 
                 // generate button database
-                sql = "INSERT INTO user_btn(email) VALUES('" + email + "')";
+                
                 for (let i = 0; i < 12; i++) {
+                    var pcount = i + 1;
+                    sql = "INSERT INTO user_btn(email, position) VALUES('" + email + "'," + "'" + pcount + "')";
                     con.query(sql, function (err, result) {
                         if (err) throw err;
                         

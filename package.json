@@ -28,6 +28,7 @@
     "obs-websocket-js": "^4.0.3",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0",
-    "pizzicato": "^0.6.4"
+    "pizzicato": "^0.6.4",
+    "recorder-js": "^1.0.7"
   }
 }

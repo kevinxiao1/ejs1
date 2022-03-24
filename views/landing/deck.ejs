@@ -4,9 +4,10 @@
         <%- include('./head'); %>
     </head>
 <body onload="checkCookie()">
-
+    <canvas id="visualizer"></canvas>
 <div class="container">
     
+    <!-- <input type="text" name="" id="loggedemail" value="" hidden> -->
     <!-- Navbar -->
     <nav>
         <div class="nav-wrapper">
@@ -25,7 +26,7 @@
     <header class="w3-container w3-red w3-center" style="padding:128px 16px">
         <h1 class="w3-margin w3-jumbo">Prototype</h1>
         <p class="w3-xlarge">Scene Switcher</p>
-        <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" onclick="con()">Connect</button>
+        <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" onclick="obscon()">Connect</button>
         <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top" onclick="openpreview()">Open Preview</button>
         <div id="scene_list"></div>
         <div id="demo"></div>
@@ -37,23 +38,28 @@
             <h1>Deck Prototype</h1>
             <h5 class="w3-padding-32"></h5>
             <div class="row">
-                <div class="col s2 m2 l2">
-                    <p>
-                        <label>
-                          <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selecttrans" checked/>
-                          <span>Add Transition</span>
-                        </label>
-                    </p>
-                </div>
-                <div class="col s4 m4 l4" >
-                    <label>Your Scenes</label>
-                    <select class="browser-default" id="stran_list">
-                        <option value="">Choose your scenes</option>
-                    </select>
-                </div>
-                <div class="col s4 m4 l4">
-                    <button class="waves-effect waves-light" id="transbutton" onclick="addscene()">add transition</button>
-                </div>
+                <form action="/deck" method="post">
+                    <div class="col s2 m2 l2">
+                        <p>
+                            <label>
+                            <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selecttrans" checked/>
+                            <span>Add Transition</span>
+                            </label>
+                        </p>
+                    </div>
+                    <div class="col s4 m4 l4" >
+                        <label>Your Scenes</label>
+                        <select onchange="svaluechange()" class="browser-default" id="stran_list">
+                            <option name="tvalue" id="tvalue" value="">Choose your scenes</option>
+                        </select>
+                    </div>
+                    <input type="text" name="sname" id="sname" value="" hidden />
+                    <input type="text" name="stype" id="stype" value="" hidden />
+                    <div class="col s4 m4 l4">
+                        <button type="submit" class="waves-effect waves-light" id="transbutton" onclick="addscene()">add transition</button>
+                    </div>
+                    
+                </form>
             </div>
             <div class="row" >
                 <div class="col s2 m2 l2">
@@ -137,7 +143,7 @@
                 <div class="col s2">
                     <button class="waves-effect waves-light btn-testplay" onclick="test()">Test Play</button>
                 </div>
-                <div class="col s3">volume<input id="volume" type="range" min="0" max="100" name="" oninput="volumechange()"/></div>
+                <!-- <div class="col s3">volume<input id="volume" type="range" min="0" max="100" name="" oninput="volumechange()"/></div> -->
                 
             </div>
             <div class="row">
@@ -160,22 +166,15 @@
                 <div class="col s12">
                     <button class="waves-effect waves-light fplay" onclick="mic()">Mic test</button>
                 </div>
-                <!-- <div class="col s12">
-                    <h5 class="w3-padding-32">Play Voice</h5>
+                <div class="col s12">
+                    <button class="waves-effect waves-light fplay" onclick="record()">Record Mic</button>
                 </div>
-                <div class="col s3">
-                    <button class="waves-effect waves-light fplay" onclick="vplay()">Play voice</button>
-                </div>
-                <div class="col s3">
-                    <button class="waves-effect waves-light fplay" onclick="fpause()">Pause File</button>
-                </div>
-                <div class="col s3">
-                    <button class="waves-effect waves-light fplay" onclick="fstop()">Stop File</button>
-                </div>
-                <div class="col s3">volume<input id="fvolume" type="range" min="0" max="1000" name="" oninput="fvolumechange()"/></div> -->
-
+            </div>
+            <div class="row">
                 
             </div>
+
+            
 
             <div class="row">
                 <div class="col s3">
@@ -194,6 +193,7 @@
             </div>
             
             <div class="row">
+                
                 <div class="col s5">
                     <input type="file" id="upload"/>
                     <!-- <form action="">
@@ -211,12 +211,28 @@
                         <source src="" id="src" />
                     </audio>
                 </div>
-                
+                <div class="col s12">
+                    <label for="volume">Volume</label>
+                    <input type="range" id="volume" min="0" max="1" value=".5" step=".01">
+                </div>
+                <div class="col s12">
+                    <label for="bass">Bass</label>
+                    <input type="range" min="-10" max="10" value="0" id="bass" >
+                </div>
+                <div class="col s12">
+                    <label for="mid">Mid</label>
+                    <input type="range" min="-10" max="10" value="0" id="mid" >
+                </div>
+                <div class="col s12">
+                    <label for="treble">Treble</label>
+                    <input type="range" min="-10" max="10" value="0" id="treble" >
+                </div>
+                <div class="col s12">
+                    <label for="reverb">Reverb</label>
+                    <input type="range" min="-10" max="10" value="0" id="reverb" >
+                </div>
             </div>
-           
-            
-        </div>
-        
+        </div>      
         </div>
     </div>
 
@@ -254,4 +270,5 @@
 </script>
 
 </body>
+<script src="/javascript/audio.js"></script>
 </html>

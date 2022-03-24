@@ -4,10 +4,14 @@
         <script>
             var OBSWebSocket = require('obs-websocket-js')
             var express = require('express')
+            
+            
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        
     <link rel="stylesheet" href="./css/design.css">
     <link rel="stylesheet" href="./css/buttondrag.css">
+
     <!-- <script src="/javascript/musicplayer.js"></script>
     <link rel="stylesheet" href="/css/musicplayer.css"> -->
 
@@ -45,38 +49,46 @@
             font-size: 30px;
             text-align: center;
         }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vw;
+            z-index: -1;
+            pointer-events: none;
+        }
     </style>
 
 
     <script> 
-        // var _eval = require('eval')
-        // var myFunc = function() { console.log("I'm a stored function!"); };
-        // // Turn it into a string
-        // var myFuncString = myFunc.toString();
-        // // Store it in your cookie
-        // document.cookie = myFuncString;
-        // // get your function back
-        // var myCookieFunc = _eval(document.cookie);
-        // // call it
         
-        // console.log(myCookieFunc)
-        // alert(myCookieFunc)
 
-        localStorage.setItem("lastname", "Smith");
 
-        var store = localStorage.getItem("lastname");
+        // function drawVisualizer() {
+        //     requestAnimationFrame(drawVisualizer);
 
-        alert(store)
+        //     const bufferLength = analyserNode.frequencyBinCount;
+        //     const dataArray = new Uint8Array(bufferLength)
+        //     analyserNode.getByteFrequencyData(dataArray)
+        //     const width = visualizer.width
+        //     const height = visualizer.height
+        //     const barWidth = width / bufferLength;
 
-        var testObject = { 'one': 1, 'two': 2, 'three': 3 };
+        //     const canvasContext = visualizer.getContext('2d')
+        //     canvasContext.clearRect(0, 0, width, height)
 
-        // Put the object into storage
-        localStorage.setItem('testObject', JSON.stringify(testObject));
+        //     dataArray.forEach((item, index) => {
+        //         const y = item / 255 * height / 2
+        //         const x = barWidth * indexl
 
-        // Retrieve the object from storage
-        var retrievedObject = localStorage.getItem('testObject');
+        //         canvasContext.fillStyle = 'rgb(0,0,0)'
+        //         canvasContext.fillRect(x, height - y ,barWidth, y)
+        //     })
+        // }
 
-        console.log('retrievedObject: ', JSON.parse(retrievedObject));
+        //drawVisualizer()
+
         
             //PIZZICATO ---------------------------------------------------------------
         var count = 0;
@@ -93,57 +105,6 @@
             sawtoothWave.volume = vol / 1000;
         }
 
-        function test() {
-            // var stat = sawtoothWave
-            // stat.on('play', function() {
-            //     stat.pause();
-            //     console.log('paused')
-            // })
-            // stat.on('pause', function() {
-            //     stat.play();
-            //     console.log('played')
-            // })
-            // console.log('clicked')
-            // console.log(sawtoothWave)
-
-            // var button = document.getElementsByClassName('btn-testplay')[0].value
-            // console.log(button)
-
-            // if (button == 'false' || count == 0) {
-            //     sawtoothWave.play()
-            //     document.getElementsByClassName('btn-testplay')[0].value = 'true'
-            //     console.log(document.getElementsByClassName('btn-testplay')[0].value)
-            //     count++
-            // }
-            // else{
-            //     sawtoothWave.pause()
-            //     document.getElementsByClassName('btn-testplay')[0].value = 'false'
-            //     console.log(document.getElementsByClassName('btn-testplay')[0].value)
-            //     count++
-            // }
-
-            var sound = new Howl({
-                src: ['/audio/what.mp3']
-            });
-
-            sound.play();
-        }
-
-        // file play
-        // var sound = new Pizzicato.Sound({ 
-        //     source: 'file',
-        //     options: { 
-        //         path: '/audio/what.mp3' ,
-        //         volume : 0.5,
-        //         attack : 0,
-        //         release : 0,
-
-        //     }
-        // }, function() {
-            
-        //     console.log('sound file loaded!');
-        // });
-
         
 
         function fvolumechange() {
@@ -151,19 +112,30 @@
             sound.volume = vol / 1000;
         }
 
+        
+
         function fplay() {
-            sound.play()
+            fsound.play()
         }
         function fpause() {
-            sound.pause()
+            fsound.pause()
         }
         function fstop() {
-            sound.stop()
+            fsound.stop()
         }
 
         // effects
         var decount = false
         var dicount = false
+        var cocount = false;
+
+        var ecompr = new Pizzicato.Effects.Compressor({
+            threshold: -20,
+            knee: 22,
+            attack: 0.05,
+            release: 0.05,
+            ratio: 18
+        })
         var edelay = new Pizzicato.Effects.Delay({
             feedback: 0.1,
             time: 1,
@@ -175,35 +147,47 @@
         function delay() {
             if (decount == false) {
                 
-                sound.addEffect(edelay);
+                fsound.addEffect(edelay);
                 decount = true;
             }
             else{
-                sound.removeEffect(edelay)
+                fsound.removeEffect(edelay)
                 decount = false
             }
             
         }
         function distort() {
            if (dicount == false) {
-                sound.addEffect(edistort);
+                fsound.addEffect(edistort);
                 dicount = true;
            }
            else{
-               sound.removeEffect(edistort)
+               fsound.removeEffect(edistort)
                dicount = false;
            }
+        }
+
+        function comppressor(){
+            if (cocount == false) {
+                fsound.addEffect(ecompr)
+                cocount = true;
+            }
+            else{
+                fsound.removeEffect(ecompr)
+                cocount = true;
+            }
+            
         }
 
         function dischange() {
             if (dicount == true) {
                 var ngain = document.getElementById('dgain').value
-                sound.removeEffect(edistort)
+                fsound.removeEffect(edistort)
                 ngain = ngain / 100
                 edistort = new Pizzicato.Effects.Distortion({
                     gain : ngain
                 });
-                sound.addEffect(edistort)
+                fsound.addEffect(edistort)
             }
         }  
 
@@ -316,7 +300,7 @@
 
 
         // SCENE SWITCHER -------------------------------
-        function con() {
+        function obscon() {
             obs.send('GetSceneList').then(data => {
                 const sceneListDiv = document.getElementById('scene_list');
 
@@ -453,14 +437,8 @@
 
         // Type Selector and Data Reader
 
-        $(window).on('load', function() {
-            var context = new AudioContext();
-            context.start()
-            
-        });
-        function foo() {
-            alert('This works!');
-        }
+
+        var fsound
         
         
         $(document).ready(function() {
@@ -499,12 +477,31 @@
                     alert('sound file loaded!');
                     sound.play();
                 });
+
+                fsound = new Pizzicato.Sound({ 
+                    source: 'file',
+                    options: { path: soundfile }
+                }, function() {
+                    alert('test sound file loaded!');
+                });
             }
            
 
             document.getElementById("upload").addEventListener("change", handleFiles, false);
-            
+
         })
+
+
+        function svaluechange(){
+
+            const list = document.getElementById('stran_list')
+            const text = list.options[list.selectedIndex].value;
+
+            var sname = document.getElementById("sname")
+            var stype = document.getElementById("stype")
+            sname.value = text;
+            stype.value = "trans";
+        }
 
         function openpreview(){
             obs.send('OpenProjector', {
@@ -515,17 +512,16 @@
         }
 
         function mic() {
-            var voice = new Pizzicato.Sound({
-                source: 'input',
-                options: { 
-                    volume: 0.8,
-                    detached: 'false', 
-                    }
-            }, () => {
-                voice.play()
-            });
-
-            
+            // var voice = new Pizzicato.Sound({
+            //     source: 'input',
+            //     options: { 
+            //         volume: 0.8,
+            //         detached: 'false', 
+            //         }
+            // }, () => {
+            //     voice.play()
+            // });
+            setupContext()
         }
             
         function tscenelist() {
@@ -598,7 +594,10 @@
             box.appendChild(div);
             div.appendChild(sceneButton);
             btncount = btncount + 1;
+
         }
+
+        
 
 
         // ADD MEDIA

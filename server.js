@@ -85,7 +85,7 @@ app.get('/', checkAuthenticated, (req, res) => {
   //     axios: require('axios')
   // });
   //res.render('pages/index.ejs', {name : req.user.name})
-  res.render('landing/deck', {name : req.user.name})
+  res.render('landing/deck', {email : req.user.email})
 
   //res.render('admin/dashboard', {name : req.user.name})
 //   req.session.views = (req.session.views + 'views')
