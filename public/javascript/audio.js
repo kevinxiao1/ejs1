@@ -87,9 +87,9 @@ async function setupContext(){
         await context.resume()
         const source = context.createMediaStreamSource(mic)
         source
-            // .connect(bassEQ)
-            // .connect(midEQ)
-            // .connect(trebleEQ)
+            .connect(bassEQ)
+            .connect(midEQ)
+            .connect(trebleEQ)
             .connect(gainNode)
             .connect(analyserNode)
             .connect(context.destination)

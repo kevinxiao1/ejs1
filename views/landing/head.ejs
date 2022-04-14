@@ -544,7 +544,6 @@
         function addscene() {
 
             if (localStorage.getItem('arrBtn') === null) {
-                alert('new array is coming')
                 var btncount = 0;
                 var arrBtn = [];
                 var arrType = [];
@@ -573,8 +572,6 @@
             sceneButton.textContent = text;
             sceneButton.classList.add('waves-effect', 'waves-light')
             // sceneButton.onclick
-            alert(text);
-
             sceneButton.onclick = function() {
                 obs.send('SetCurrentScene', {
                     'scene-name': text
@@ -604,7 +601,6 @@
 
         function addmedia() {
             if (localStorage.getItem('arrBtn') === null) {
-                alert('new array is coming')
                 var btncount = 0;
                 var arrBtn = [];
                 var arrType = [];
@@ -633,7 +629,6 @@
             sceneButton.textContent = text;
             sceneButton.classList.add('waves-effect', 'waves-light')
             // sceneButton.onclick
-            alert(text);
 
             sceneButton.onclick = function() {
                 obs.send('RestartMedia',{sourceName: text}).then(() => {
