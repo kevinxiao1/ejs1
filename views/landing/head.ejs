@@ -220,48 +220,71 @@
          // SAMPLE CONNECT AND REQUEST
         var module = require('obs-module');
         const obs = new OBSWebSocket();
-        obs.connect({
-            address: 'localhost:4444',
-            password: 'kw912049'
-        })
-        .then(() => {
-            console.log(`Success! We're connected & authenticated.`);
-            obs.send('GetSceneList').then(data => {
-                const sceneListDiv = document.getElementById('stran_list');
+        
+
+
+        // SCENE SWITCHER -------------------------------
+        function obscon() {
+            const ipaddress = document.getElementById('ipaddress').value
+            const password = document.getElementById('password').value;
+
+            obs.connect({
+                address: ipaddress + ':4444',
+                password: password
+            })
+            .then(() => {
+                console.log(`Success! We're connected & authenticated.`);
+                obs.send('GetSceneList').then(data => {
+                    const sceneListDiv = document.getElementById('stran_list');
+                    const sceneListDivButton = document.getElementById('scene_list');
+                    data.scenes.forEach(scene => {
+                        const sceneElement = document.createElement('option');
+                        sceneElement.textContent = scene.name;
+                        sceneElement.id = scene.name;
+                        sceneElement.value = scene.name;
+
+                        const sceneElementButton = document.createElement('button');
+                        sceneElementButton.textContent = scene.name;
+                        sceneElementButton.onclick = function() {
+                            obs.send('SetCurrentScene', {
+                                'scene-name': scene.name
+                            });
+                            };
+                        sceneListDiv.appendChild(sceneElement);
+                        sceneListDivButton.appendChild(sceneElementButton);
+
+                    });
+
+                   
 
                 data.scenes.forEach(scene => {
-                    const sceneElement = document.createElement('option');
-                    sceneElement.textContent = scene.name;
-                    sceneElement.id = scene.name;
-                    sceneElement.value = scene.name;
-
-                    sceneListDiv.appendChild(sceneElement);
+                    
                 });
-            })
-            return obs.send('GetMediaSourcesList');
-            // return obs.send('GetSourceTypesList')
-        })
-            .then(data =>{
-                const medialist = document.getElementById('media_list')
-                data.mediaSources.forEach(source => {
-                    console.log(`new source! its ${source.sourceName}`)  
-                    const sceneElement = document.createElement('option');
-                    sceneElement.textContent = source.sourceName;
-                    sceneElement.id = source.sourceName;
-                    sceneElement.value = source.sourceName
-
-                    medialist.appendChild(sceneElement);
                 })
-                return obs.send('GetSourcesList');
-            }).then(data =>{
-                data.sources.forEach(source => {
-                    obs.send('GetMute', {
-                        source: source.name,
-                    }).then(status => {
-                        console.log(source.name + ' is ' + status.muted)
+                return obs.send('GetMediaSourcesList');
+                // return obs.send('GetSourceTypesList')
+            })
+                .then(data =>{
+                    const medialist = document.getElementById('media_list')
+                    data.mediaSources.forEach(source => {
+                        console.log(`new source! its ${source.sourceName}`)  
+                        const sceneElement = document.createElement('option');
+                        sceneElement.textContent = source.sourceName;
+                        sceneElement.id = source.sourceName;
+                        sceneElement.value = source.sourceName
+
+                        medialist.appendChild(sceneElement);
+                    })
+                    return obs.send('GetSourcesList');
+                }).then(data =>{
+                    data.sources.forEach(source => {
+                        obs.send('GetMute', {
+                            source: source.name,
+                        }).then(status => {
+                            console.log(source.name + ' is ' + status.muted)
+                        })
                     })
                 })
-            })
             
 
             // .then(data =>{
@@ -298,23 +321,9 @@
                 console.error('socket error:', err);
         });
 
-
-        // SCENE SWITCHER -------------------------------
-        function obscon() {
+        
             obs.send('GetSceneList').then(data => {
-                const sceneListDiv = document.getElementById('scene_list');
-
-                data.scenes.forEach(scene => {
-                    const sceneElement = document.createElement('button');
-                    sceneElement.textContent = scene.name;
-                    sceneElement.onclick = function() {
-                    obs.send('SetCurrentScene', {
-                        'scene-name': scene.name
-                    });
-                    };
-
-                    sceneListDiv.appendChild(sceneElement);
-                });
+                
             })
         }
 

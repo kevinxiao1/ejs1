@@ -5,7 +5,7 @@ function con() {
     document.getElementById('address_button').addEventListener('click', e => {
 
     obs.connect({
-        address: 'localhost:4444',
+        address: '10.10.3.34:4444',
         password: 'kw912049'
     });
     });
