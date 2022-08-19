@@ -8,6 +8,7 @@
             
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.min.js"></script>
         
     <link rel="stylesheet" href="./css/design.css">
     <link rel="stylesheet" href="./css/buttondrag.css">
@@ -227,10 +228,12 @@
         function obscon() {
             const ipaddress = document.getElementById('ipaddress').value
             const password = document.getElementById('password').value;
-
+            
             obs.connect({
                 address: ipaddress + ':4444',
                 password: password
+                // address: '10.10.1.71:4444',
+                // password: 'kw912049'
             })
             .then(() => {
                 console.log(`Success! We're connected & authenticated.`);
@@ -830,3 +833,5 @@
     }
 
     </script>
+
+
