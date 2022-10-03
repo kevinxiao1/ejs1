@@ -49,6 +49,11 @@ app.use(methodOverride('_method'));
 //     keys: ['key1', 'key2']
 // }))
 
+// WEBTEMPLATE TEST
+app.get('/index', (req, res) => {
+    res.render('landing/index')
+})
+
 // LOGOUT METHOD
 app.delete('/logout', (req,res) => {
     req.logOut()
