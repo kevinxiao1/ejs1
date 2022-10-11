@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <%- include('./head'); %>
+        <%- include('../webaudioapi/webaudiojs'); %> 
     </head>
 <body">
     <canvas id="visualizer"></canvas>
@@ -26,7 +27,7 @@
     <header class="w3-container w3-red w3-center" style="padding:128px 16px">
         <h1 class="w3-margin w3-jumbo">Prototype</h1>
         <p class="w3-xlarge">Scene Switcher</p>
-        <video id="videoElement" width="600px" height="400px"></video>
+        <video id="videoElement" width="600px" height="400px" muted="muted"></video>
     
         <input type="text" placeholder="IP address" id="ipaddress" name="ipaddress" required/>
         <input type="password" placeholder="Password" id="password" name="password" required/>
@@ -45,10 +46,11 @@
                     <div class="col s2 m2 l2">
                         <p>
                             <label>
-                            <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selecttrans" checked/>
+                            <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selecttrans"/>
                             <span>Add Transition</span>
                             </label>
                         </p>
+                        
                     </div>
                     <div class="col s4 m4 l4" >
                         <label>Your Scenes</label>
@@ -240,6 +242,54 @@
     </div>
 
     
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Prototype mixer</h1>
+    <button id="susresBtn" onclick="susres()">Resume Context</button>
+    <div class="col s12">
+        <button class="waves-effect waves-light fplay" id="openMic" onclick="setupContext()">open mic</button>
+    </div>
+    <div class="col s12">
+        <label for="volume">Volume</label>
+        <input type="range" id="volume" min="0" max="1" value=".5" step=".01">
+    </div>
+    <div class="col s12">
+        <label for="bass">Bass</label>
+        <input type="range" min="-10" max="10" value="0" id="bass" >
+    </div>
+    <div class="col s12">
+        <label for="mid">Mid</label>
+        <input type="range" min="-10" max="10" value="0" id="mid" >
+    </div>
+    <div class="col s12">
+        <label for="treble">Treble</label>
+        <input type="range" min="-10" max="10" value="0" id="treble" >
+    </div>
+    
+    <button active='false' id='compress'>Add compression</button><br>
+    <!-- minimum threshold -->
+    <input id='Threshold' type='range' min=-100 max=0 value=-20>Threshold<br>
+
+    <!-- range between threshold to this value where compression are applied -->
+    <input id='Knee' type='range' min=0 max=40 value=0>Knee<br>
+
+    <input id='Ratio' type='range' min=1 max=20 value=12>Ratio<br>
+    
+    <input id='Attack' type='range' min=0 max=1000 value=0>Attack<br>
+    <input id='Release' type='range' min=0 max=1000 value=5>Release
+
+</body>
+</html>
+
+
+    
     
     <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
         <h1 class="w3-margin w3-xlarge">Quote of the day: live life</h1>
@@ -273,7 +323,8 @@
 </script>
 
 </body>
-<script src="/javascript/audio.js"></script>
+<!-- <script src="/javascript/audio.js"></script> -->
+<script src="/javascript/webaudioapi.js"></script>
 <script>
     if (flvjs.isSupported()) {
         var videoElement = document.getElementById('videoElement');

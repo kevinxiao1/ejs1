@@ -63,10 +63,75 @@
                                         </div>
 
                                         <div class="content col-2 col-md-1">
-                                            
                                             <div class="col">Start Stop Record</div>
                                             <div class="col s4 m4 l4"><button id="rec" class="waves-effect waves-light btn-large ww" onclick="recstart()"> Record</button></div>
                                             <div class="col s4 m4 l4" onclick="recstop()"><button class="waves-effect waves-light btn-large ww">Stop Record</button></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row gy-4">
+                                        <h2>Scene Interactions</h1>
+                                        <p>Your interactions can be added here!</p>
+                                        <div class="row">
+                                            <form action="/deck" method="post">
+                                                <!-- <div class="col s2 m2 l2"> contoh radio interraksi transisi
+                                                    <p>
+                                                        <label>
+                                                        <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selecttrans" checked/>
+                                                        <span>Add Transition</span>
+                                                        </label>
+                                                    </p>
+                                                </div> -->
+                                                <div class="col s4 m4 l4" >
+                                                    <label>Your Scenes</label>
+                                                    <select onchange="svaluechange()" class="browser-default" id="stran_list">
+                                                        <option name="tvalue" id="tvalue" value="">Choose your scenes</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="deckselect" id="selecttrans" checked>
+                                                    <label class="form-check-label" for="flexRadioDefault1">
+                                                      Add Transition
+                                                    </label>
+                                                  </div>
+                                                  <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="deckselect" id="selectmedia" >
+                                                    <label class="form-check-label" for="flexRadioDefault2">
+                                                      Add media
+                                                    </label>
+                                                </div>
+                                                <!-- <input type="text" name="sname" id="sname" value="" hidden />
+                                                <input type="text" name="stype" id="stype" value="" hidden />
+                                                <div class="col s4 m4 l4">
+                                                    <button type="submit" class="waves-effect waves-light" id="transbutton" onclick="addscene()">add transition</button>
+                                                </div> -->
+                                                
+                                            </form>
+                                        </div>
+                                        <div class="row" >
+                                            <!-- <div class="col s2 m2 l2"> contoh radio interaksi media
+                                                <p>
+                                                    <label>
+                                                      <input class="with-gap radiodeck" name="deckselect" type="radio"  id="selectmedia"/>
+                                                      <span>Add Media Play</span>
+                                                    </label>
+                                                </p>
+                                            </div> -->
+                            
+                                            <div class="col s4 m4 l4">
+                                                <label>Your Media</label>
+                                                <select class="browser-default" id="media_list" disabled>
+                                                    <option value="" disabled selected>Choose your media to play</option>
+                                                </select>
+                                            </div>
+                                            <div class="col s4 m4 l4">
+                                                <button class="waves-effect waves-light" id="mediabutton" onclick="addmedia()" disabled>add media play</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" id="deckadd">
+                                            <!-- <div class="col s4 m4 l4"><a id="rec" class="waves-effect waves-light btn-large ww" onclick="recstart()"> Record</a></div> -->
+                                            <!-- <div class="col s4 m4 l4" onclick="recstop()"><a class="waves-effect waves-light btn-large ww">Stop Record</a></div> -->
+                                            <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div> -->
                                         </div>
                                     </div>
                             </div>

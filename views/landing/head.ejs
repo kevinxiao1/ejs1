@@ -7,9 +7,11 @@
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.min.js"></script>
+        <script src="http://reverbjs.org/reverb.js"></script>
         
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script> -->
 
     <link rel="stylesheet" href="./css/design.css">
     <link rel="stylesheet" href="./css/buttondrag.css">
@@ -18,10 +20,10 @@
     <link rel="stylesheet" href="/css/musicplayer.css"> -->
 
         <!-- Compiled and minified CSS -->
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
         <!-- Compiled and minified JavaScript -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzicato/0.6.4/Pizzicato.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,6 +32,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
         <style>
         body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
@@ -227,14 +230,14 @@
 
         // SCENE SWITCHER -------------------------------
         function obscon() {
-            const ipaddress = document.getElementById('ipaddress').value
-            const password = document.getElementById('password').value;
+            // const ipaddress = document.getElementById('ipaddress').value
+            // const password = document.getElementById('password').value;
             
             obs.connect({
-                address: ipaddress + ':4444',
-                password: password
-                // address: '192.168.0.37:4444',
-                // password: 'kw912049'
+                // address: ipaddress + ':4444',
+                // password: password
+                address: '192.168.50.210:4444',
+                password: 'kw912049'
             })
             .catch(err => { // Promise convention dicates you have a catch on every chain.
                 log.error('Connection or Authentication failed', err);
@@ -242,7 +245,7 @@
             .then(() => {
                 console.log(`Success! We're connected & authenticated.`);
                 obs.send('GetSceneList').then(data => {
-                    // const sceneListDiv = document.getElementById('stran_list');
+                    const sceneListDiv = document.getElementById('stran_list');
                     const sceneListDivButton = document.getElementById('scene_list');
                     data.scenes.forEach(scene => {
                         const sceneElement = document.createElement('option');
@@ -258,7 +261,7 @@
                                 'scene-name': scene.name
                             });
                             };
-                        // sceneListDiv.appendChild(sceneElement);
+                        sceneListDiv.appendChild(sceneElement);
                         sceneListDivButton.appendChild(sceneElementButton);
 
                     });
@@ -266,29 +269,27 @@
                 return obs.send('GetMediaSourcesList');
                 // return obs.send('GetSourceTypesList')
             })
-                // .then(data =>{
-                //     const medialist = document.getElementById('media_list')
-                //     data.mediaSources.forEach(source => {
-                //         console.log(`new source! its ${source.sourceName}`)  
-                //         const sceneElement = document.createElement('option');
-                //         sceneElement.textContent = source.sourceName;
-                //         sceneElement.id = source.sourceName;
-                //         sceneElement.value = source.sourceName
+                .then(data =>{
+                    const medialist = document.getElementById('media_list')
+                    data.mediaSources.forEach(source => {
+                        console.log(`new source! its ${source.sourceName}`)  
+                        const sceneElement = document.createElement('option');
+                        sceneElement.textContent = source.sourceName;
+                        sceneElement.id = source.sourceName;
+                        sceneElement.value = source.sourceName
 
-                //         medialist.appendChild(sceneElement);
-                //     })
-                //     return obs.send('GetSourcesList');
-                // }).then(data =>{
-                //     data.sources.forEach(source => {
-                //         obs.send('GetMute', {
-                //             source: source.name,
-                //         }).then(status => {
-                //             console.log(source.name + ' is ' + status.muted)
-                //         })
-                //     })
-                // })
-            
-
+                        medialist.appendChild(sceneElement);
+                    })
+                    return obs.send('GetSourcesList');
+                }).then(data =>{
+                    data.sources.forEach(source => {
+                        obs.send('GetMute', {
+                            source: source.name,
+                        }).then(status => {
+                            console.log(source.name + ' is ' + status.muted)
+                        })
+                    })
+                })
             // .then(data =>{
             //     data.types.forEach(type => {
             //         if (type.caps.canInteract) {
@@ -296,7 +297,6 @@
             //         }
             //     })
             // })
-
         // .then(data => {
         //     console.log(`${data.scenes.length} Available Scenes!`);
 
@@ -456,6 +456,7 @@
                     $('#stran_list').attr("disabled",false)
                     $('#transbutton').attr("disabled",false)
                     console.log('trans')
+                    $('#selectmedia').attr("checked", false)
                 }
                 else{
                     $('#media_list').attr("disabled",false)
@@ -463,6 +464,7 @@
                     $('#stran_list').attr("disabled",true)
                     $('#transbutton').attr("disabled",true)
                     console.log('media')
+                    $('#selecttrans').attr("checked", false)
                 }
             });
             readData();
