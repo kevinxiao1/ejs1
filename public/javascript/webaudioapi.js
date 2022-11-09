@@ -28,6 +28,8 @@ if (!navigator.mediaDevices?.enumerateDevices) {
 
 const context = new AudioContext()
 reverbjs.extend(context);
+let panNode = new StereoPannerNode(context)
+
 const analyserNode = new AnalyserNode(context, { fftSize: 256 })
 const gainNode = new GainNode(context, {gain: volume.value})
 const compressor = new DynamicsCompressorNode(context,
@@ -50,12 +52,43 @@ const trebleEQ = new BiquadFilterNode(context, {
     gain: treble.value
 })
 
+const panControl = document.getElementById("panning_control");
+const panValue = document.getElementById("panning_value");
+
+panControl.oninput = () => {
+    panNode.pan.value = panControl.value;
+    panValue.textContent = panControl.value;
+};
+
+const dist = context.createWaveShaper();
+const distControl = document.getElementById("dist_control")
+const distValue = document.getElementById("dist_value")
+const DEG = Math.PI / 180;
+
+function makeDistortionCurve(k) {
+  const n_samples = 44100;
+  const curve = new Float32Array(n_samples);
+  curve.forEach((_, i) => {
+    const x = (i * 2) / n_samples - 1;
+    curve[i] = ((3 + k) * x * 20 * DEG) / (Math.PI + k * Math.abs(x));
+  });
+  return curve;
+}
+
+dist.curve = makeDistortionCurve(0)
+
+distControl.oninput = () => {
+    dist.curve = makeDistortionCurve(distControl.value)
+    console.log(distControl.value)
+}
+
+
     // var reverbUrl = "http://reverbjs.org/Library/DomesticLivingRoom.m4a";
     // var reverbNode = context.createReverbFromUrl(reverbUrl, function() {
     //     reverbNode.connect(context.destination);
     // });
 
-    context.destination.setSinkId('0ab184bcde00ef60eed49b26566d52ad29e726aa243e67accf8f3bb8be7ba889')
+    // context.destination.setSinkId('0ab184bcde00ef60eed49b26566d52ad29e726aa243e67accf8f3bb8be7ba889')
 
 
 setupEventListeners();
@@ -105,6 +138,8 @@ async function setupContext(){
             .connect(trebleEQ)
             .connect(gainNode)
             .connect(analyserNode)
+            .connect(panNode)
+            .connect(dist)
             // .connect(reverbNode)
             .connect(context.destination)
     
@@ -114,40 +149,72 @@ openMic.onclick = () => {
     setupContext();
 }
 
-async function addcompress() {
-    console.log('compress')
+function addcompress() {
+    
     const compress = document.getElementById('compress')
+
+    if(compress.textContent == 'Add compression') {
+        console.log('compress added')
+        compress.setAttribute('active', 'true')
+        compress.innerHTML = 'Remove compression'
+        // compressor.connect(context.destination)
+
+        source.connect(compressor);
+        compressor.connect(context.destination);
+        //reverbNode.connect(compressor).connect(context.destination)
+      } else {
+        compress.setAttribute('active', 'false')
+        console.log('compress removedF')
+        compress.innerHTML = 'Add compression'
+        // source.disconnect(compressor);
+        compressor.disconnect(context.destination);
+        source.connect(context.destination);
+        
+      //   reverbNode.disconnect(compressor)
+      //   reverbNode.connect(context.destination)
+      }
 }
 
-compress.onclick = function() {
+// compress.onclick = function() {
     
-    if(compress.getAttribute('active') === 'false') {
-      compress.setAttribute('active', 'true')
-      compress.innerHTML = 'Remove compression'
-      compressor.connect(context.destination)
-      //reverbNode.connect(compressor).connect(context.destination)
-    } else {
-      compress.setAttribute('active', 'false')
-      compress.innerHTML = 'Add compression'
-      context.destination.disconnect(compressor)
-    //   reverbNode.disconnect(compressor)
-    //   reverbNode.connect(context.destination)
-    }
-  }
+//     if(compress.getAttribute('active') === 'false') {
+//       compress.setAttribute('active', 'true')
+//       compress.innerHTML = 'Remove compression'
+//       compressor.connect(context.destination)
+//       //reverbNode.connect(compressor).connect(context.destination)
+//     } else {
+//       compress.setAttribute('active', 'false')
+//       compress.innerHTML = 'Add compression'
+//       context.destination.disconnect(compressor)
+//     //   reverbNode.disconnect(compressor)
+//     //   reverbNode.connect(context.destination)
+//     }
+//   }
+
+const Threshold = document.getElementById('Threshold')
+const Knee = document.getElementById('Knee')
+const Ratio = document.getElementById('Ratio')
+const Attack = document.getElementById('Attack')
+const Release = document.getElementById('Release')
 
 Threshold.oninput = () => {
+    console.log("T")
     compressor.threshold = Threshold.value
 }
 Knee.oninput = () => {
+    console.log("T")
     compressor.knee = Knee.value
 }
 Ratio.oninput = () => {
+    console.log("T")
     compressor.ratio = Ratio.value
 }
 Attack.oninput = () => {
+    console.log("T")
     compressor.attack = parseFloat(Attack.value) 
 }
 Release.oninput = () => {
+    console.log("T")
     compressor.release = parseFloat(Release.value)
 }
 
@@ -194,13 +261,13 @@ function addeffect() {
             console.log(error)
         }
     }
-    else if (effectname == '') {
+    else if (effectname == 'panner') {
         
     }
-    else if (effectname == '') {
+    else if (effectname == 'distort') {
         
     }
-    else if (effectname == '') {
+    else if (effectname == 'delay') {
         
     }
     else if (effectname == '') {
