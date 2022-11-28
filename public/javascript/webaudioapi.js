@@ -1,3 +1,5 @@
+const e = require("express");
+
 const volume = document.getElementById('volume')
 const bass = document.getElementById('bass')
 const mid = document.getElementById('mid')
@@ -25,7 +27,7 @@ if (!navigator.mediaDevices?.enumerateDevices) {
 // trying stuffs ends here
 
 
-
+//BASIC MIC SETUP AND EQ
 const context = new AudioContext()
 reverbjs.extend(context);
 let panNode = new StereoPannerNode(context)
@@ -52,14 +54,21 @@ const trebleEQ = new BiquadFilterNode(context, {
     gain: treble.value
 })
 
-const panControl = document.getElementById("panning_control");
-const panValue = document.getElementById("panning_value");
+//STEREO PANNING
 
-panControl.oninput = () => {
+function pannerchange() {
+    const panControl = document.getElementById("panning_control");
+    const panValue = document.getElementById("panning_value");
     panNode.pan.value = panControl.value;
     panValue.textContent = panControl.value;
-};
+}
 
+// panControl.oninput = () => {
+    
+// };
+
+
+//DISTORTION
 const dist = context.createWaveShaper();
 const distControl = document.getElementById("dist_control")
 const distValue = document.getElementById("dist_value")
@@ -83,12 +92,40 @@ distControl.oninput = () => {
 }
 
 
+
+
+function toggleDelay() {
+    
+    
+}
+
+
     // var reverbUrl = "http://reverbjs.org/Library/DomesticLivingRoom.m4a";
     // var reverbNode = context.createReverbFromUrl(reverbUrl, function() {
     //     reverbNode.connect(context.destination);
     // });
 
     // context.destination.setSinkId('0ab184bcde00ef60eed49b26566d52ad29e726aa243e67accf8f3bb8be7ba889')
+
+// PLAY FROM FILE
+function readFile(files) {
+    var fileReader = new FileReader();
+        fileReader.readAsArrayBuffer(files[0]);
+        fileReader.onload = function(e) {
+            playAudioFile(e.target.result);
+            console.log(("Filename: '" + files[0].name + "'"), ( "(" + ((Math.floor(files[0].size/1024/1024*100))/100) + " MB)" ));
+        }
+}
+function playAudioFile(file) {
+    //var context = new window.AudioContext();
+        context.decodeAudioData(file, function(buffer) {
+                source = context.createBufferSource();
+                source.buffer = buffer;
+                source.loop = false;
+                source.connect(context.destination);
+                source.start(0); 
+        });
+}
 
 
 setupEventListeners();
@@ -131,6 +168,8 @@ async function setupContext(){
     console.log('getting mic')
     const mic = await getMic()
         await context.resume()
+
+
         source = context.createMediaStreamSource(mic)
         source
             .connect(bassEQ)
@@ -139,7 +178,8 @@ async function setupContext(){
             .connect(gainNode)
             .connect(analyserNode)
             .connect(panNode)
-            .connect(dist)
+            // .connect(dist)
+            // .connect(delay)
             // .connect(reverbNode)
             .connect(context.destination)
     
@@ -232,7 +272,7 @@ function addeffect() {
 
             const btnElement = document.createElement('button')
             btnElement.textContent = 'Turn on'
-            btnElement.id = 'reverbToggle'
+            btnElement.id = 'btnReverbToggle'
             btnElement.setAttribute('onclick', 'reverbToggle()')
             
 
@@ -261,14 +301,86 @@ function addeffect() {
             console.log(error)
         }
     }
-    else if (effectname == 'panner') {
+    else if (effectname == 'stereo panner') {
+        // <h2>Set stereo panning</h2>
+        //     <input
+        //         id="panning_control"
+        //         type="range"
+        //         min="-1"
+        //         max="1"
+        //         step="0.1"
+        //         value="0"
+        //     />
+        //     <span class="panning_value">0</span>
+        try {
+            const header = document.createElement('h2')
+            const span = document.createElement('span')
+            span.textContent = '0'
+            span.setAttribute('id', 'panning_value')
+            header.textContent = 'Stereo Panner'
+
+            const input = document.createElement('input')
+            setAttributes(input, {
+                "id" :"panning_control",
+                "type" :"range",
+                "min" :"-1",
+                "max" :"1",
+                "step" :"0.1",
+                "value" :"0",
+                "oninput" : "pannerchange()"
+            })
+
+
+            parent.appendChild(header)
+            parent.appendChild(input)
+            parent.appendChild(span)
+            mixerPad.appendChild(parent)
+
+            panNode.connect(context.destination)
+            source.connect(panNode)
+
+            console.log('pannercomplete')
+        } catch (error) {
+            console.log(error)
+        }
         
     }
-    else if (effectname == 'distort') {
-        
+    else if (effectname == 'distortion') {
+        try {
+            const header = document.createElement('h2')
+            
+            header.textContent = 'Distort'
+
+            const input = document.createElement('input')
+            setAttributes(input, {
+                "id" :"dist_control",
+                "type" :"range",
+                "min" :"0",
+                "max" :"100",
+                "step" :"1",
+                "value" :"0",
+            })
+            
+            parent.appendChild(header)
+            parent.appendChild(input)
+            mixerPad.appendChild(parent)
+            console.log('distcomplete')
+        } catch (error) {
+            console.log(error)
+        }
     }
     else if (effectname == 'delay') {
-        
+        try {
+            const header = document.createElement('h2')
+            header.textContent = 'delay'
+
+
+            parent.appendChild(header)
+            mixerPad.appendChild(parent)
+            console.log('pannercomplete')
+        } catch (error) {
+            console.log(error)
+        }
     }
     else if (effectname == '') {
         
@@ -279,23 +391,35 @@ function reverbToggle() {
     console.log('toggle')
     const list = document.getElementById('reverbList')
     const value = list.options[list.selectedIndex].value
+    const btn = document.getElementById('btnReverbToggle')
+    var reverbNode;
 
-    if (value == 'AbernyteGrainSilo') {
-        var reverbUrl = "http://reverbjs.org/Library/AbernyteGrainSilo.m4a";
-        var reverbNode = context.createReverbFromUrl(reverbUrl, function() {
-            reverbNode.connect(context.destination);
-        });
-        source.connect(reverbNode)
-        console.log('silo')
+    if (btn.textContent == "Turn on") {
+        if (value == 'AbernyteGrainSilo') {
+            var reverbUrl = "http://reverbjs.org/Library/AbernyteGrainSilo.m4a";
+            reverbNode = context.createSourceFromUrl(reverbUrl, function() {
+                reverbNode.connect(context.destination);
+            });
+            source.connect(reverbNode)
+            console.log('silo')
+        }
+        else if (value == 'HamiltonMausoleum') {
+            var reverbUrl = "http://reverbjs.org/Library/HamiltonMausoleum.m4a";
+            reverbNode = context.createSourceFromUrl(reverbUrl, function() {
+                reverbNode.connect(context.destination);
+            });
+            source.connect(reverbNode)
+            console.log('Mausoleum')
+        }
+        btn.textContent = "Turn off"
     }
-    else if (value == 'HamiltonMausoleum') {
-        var reverbUrl = "http://reverbjs.org/Library/HamiltonMausoleum.m4a";
-        var reverbNode = context.createReverbFromUrl(reverbUrl, function() {
-            reverbNode.connect(context.destination);
-        });
-        source.connect(reverbNode)
-        console.log('Mausoleum')
+    else {
+        
+        source.disconnect(context.destination)
+        //source.resume()
+        btn.textContent = "Turn on"
     }
+    
 }
 
 
@@ -322,8 +446,54 @@ async function btnOutList(evt) {
     };
 }
 
+//DELAY
+var delay = context.createDelay();
+delay.delayTime.value = 0.4;
+
+const feedback = context.createGain();
+feedback.gain.value = 0.3;
+
+const delayControl = document.getElementById('delay_control')
+const feedbackControl = document.getElementById('feedback_control')
+
+delayControl.oninput = () => {
+    delay.delayTime.value = delayControl.value
+}
+
+feedbackControl.oninput = () => {
+    feedback.gain.value = feedbackControl.value
+}
+
+btnDelay.onclick = () => {
+    try {
+        console.log('delay')
+        const btnDelay = document.getElementById('btnDelay')
+        // if (btnDelay.innerHTML == 'activate delay') {
+        //     source.connect(delay)
+        //     btnDelay.innerHTML == 'deactivate delay'
+        // }
+        // else{
+        //     source.disconnect(delay)
+        //     btnDelay.innerHTML == 'activate delay'
+        // }
+        delay.connect(feedback)
+        feedback.connect(delay)
+        source.connect(delay)
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 btnOutList.onclick = async (evt) => {
     // request device access the bad way,
     // until we get a proper mediaDevices.selectAudioOutput
     
 }
+
+// Helper Functions
+function setAttributes(el, attrs) {
+    for(var key in attrs) {
+      el.setAttribute(key, attrs[key]);
+    }
+  }

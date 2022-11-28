@@ -296,7 +296,7 @@
 
             
             <!-- starting to build the planned audio mixer -->
-            <select onchange="audiomixchange()" class="browser-default" id="effect_list">
+            <select class="browser-default" id="effect_list">
                 <option name="effectvalue" id="effectvalue" value="" disabled>add effects to your microphone input</option>
                 <option name="effectvalue" id="effectvalue" value="reverb">reverb</option>
                 <option name="effectvalue" id="effectvalue" value="compressor">compressor</option>
@@ -311,16 +311,16 @@
 
             <button id="btnOutList" onclick="btnOutList()">get list of outputs</button>
 
-            <h2>Set stereo panning</h2>
+            <!-- <h2>Set stereo panning</h2>
             <input
-                id="panning_control"
+                class="panning_control"
                 type="range"
                 min="-1"
                 max="1"
                 step="0.1"
                 value="0"
             />
-            <span class="panning_value">0</span>
+            <span class="panning_value">0</span> -->
 
             <h2>Set distortion</h2>
 
@@ -333,6 +333,43 @@
                 value="0"
             />
             <span class="dist_value">0</span>
+
+            <h2>Set Delay</h2>
+
+            <label for="delay_control">Delay</label>
+            <input
+                id="delay_control"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0"
+            />
+            <span class="delay_value">0</span>
+
+            <label for="feedback_control">Feedback</label>
+            <input
+                id="feedback_control"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0"
+            />
+            <span class="feedback_value">0</span>
+
+            <button id="btnDelay" onclick="toggleDelay()">activate delay</button>
+
+            <h2>Play from file</h2>
+            <button>select file</button>
+
+            <label for="audioFileChooser">Upload an audio file: </label><br><br>
+            <input  id="audioFileChooser" type="file" onchange="readFile(this.files);">
+
+            <script>
+                
+            </script>
+
         </div>      
         </div>
     </div>
