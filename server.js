@@ -4,6 +4,8 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+console.log('Now the value for FOO is:', process.env.FOO);
+
 const express = require('express');
 
 const app = express();
@@ -34,7 +36,7 @@ app.use(flash())
 app.set('trust proxy', 1)
 app.use(session({
     key : 'session_cookie_name',
-    secret : process.env.SESSION_SECRET,
+    secret : process.env["SESSION_SECRET"],
     // store : sessionStore,
     resave : false,
     saveUninitialized : false,
@@ -111,7 +113,7 @@ app.get('/', checkAuthenticated, (req, res) => {
     } catch (error) {
         
     }
-  
+    // res.render('landing/deck')
 
   //res.render('admin/dashboard', {name : req.user.name})
 //   req.session.views = (req.session.views + 'views')
