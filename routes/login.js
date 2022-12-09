@@ -9,6 +9,7 @@ const con = require('./../model/user');
 
 
 const initializePassport = require('../passport-config');
+const connection = require('./../model/user');
 initializePassport(passport
 //   email => users.find(user => user.email === email),
 //   id => users.find(user => user.id === id)
@@ -31,6 +32,8 @@ router.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }))
 
 
+
+
 // REGISTER PAGE
 router.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('login/register.ejs');
@@ -49,8 +52,9 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
         //     email: email,
         //     password: password,
         // })
+        con.checkConnection()
         var sql = "SELECT * FROM `user` WHERE `email` = '" + email + "'";
-        con.query(sql, function (err, result, fields) {
+        con.connection.query(sql, function (err, result, fields) {
             if (err) throw err;
             console.log("read");
             if (result.length > 0) {
@@ -61,7 +65,7 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
             else{
                 //insert user
                 sql = "INSERT INTO user(name, email, password, functions) VALUES('" + name + "', '" + email + "', '" + password + "', 'function')";
-                con.query(sql, function (err, result) {
+                con.connection.query(sql, function (err, result) {
                     if (err) throw err;
                     console.log("1 record inserted");
                 });
@@ -71,7 +75,7 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
                 for (let i = 0; i < 12; i++) {
                     var pcount = i + 1;
                     sql = "INSERT INTO user_btn(email, position) VALUES('" + email + "'," + "'" + pcount + "')";
-                    con.query(sql, function (err, result) {
+                    con.connection.query(sql, function (err, result) {
                         if (err) throw err;
                         
                     });
@@ -80,12 +84,13 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
                         console.log("button generated");
                     }
                 }
-
+                con.connection.end();
                 res.redirect('/login');
             }
         });
 
     } catch (error) {
+        connection.end()
         res.redirect('/register');
         console.log(error)
     }

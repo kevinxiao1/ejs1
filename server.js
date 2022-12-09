@@ -11,6 +11,7 @@ const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
+const con = require('./model/user')
 
 // var options = {
 // 	host: 'localhost',
@@ -71,6 +72,10 @@ function checkAuthenticated(req, res, next) {
     return res.redirect('/login')
 }
 
+app.get('/deck', checkAuthenticated , (req,res) => {
+    res.render('landing/deck.ejs')
+})
+
 // ADMIN PAGE
 app.get('/admin/dashboard', (req, res) => {
     // res.render('testing/testing', {
@@ -92,51 +97,67 @@ app.get('/', checkAuthenticated, (req, res) => {
   //     axios: require('axios')
   // });
   //res.render('pages/index.ejs', {name : req.user.name})
-  res.render('landing/deck', {email : req.user.email})
+    try {
+        var sql = "SELECT * FROM `user_btn` WHERE email ='" + req.user.email + "'"
+        con.connection.query(sql, function (err, result, fields) {
+            if (err) throw err;
+            var data = result
+            console.log('get data')
+            res.render('landing/deck', {
+                email : req.user.email,
+                data : data
+            })
+        })
+    } catch (error) {
+        
+    }
+  
 
   //res.render('admin/dashboard', {name : req.user.name})
 //   req.session.views = (req.session.views + 'views')
 //   res.end(req.session.views + 'views')
 });
 
-app.get('/test', (req, res) => {
-    // res.render('testing/testing', {
-    //     axios: require('axios')
-    // });
-    res.render('testing/dragreplace.ejs')
-  });
+
+
+// app.get('/test', (req, res) => {
+//     // res.render('testing/testing', {
+//     //     axios: require('axios')
+//     // });
+//     res.render('testing/dragreplace.ejs')
+//   });
 
 // ABOUT PAGE
-app.get('/about', function(req, res) {
-  res.render('pages/about');
-});
+// app.get('/about', function(req, res) {
+//   res.render('pages/about');
+// });
 
 
 // TESTER LANDING PAGE
-app.get('/musicplayer', function(req, res) {
-    res.render('testing/musicplayer.ejs', {
-    });
-  });
+// app.get('/musicplayer', function(req, res) {
+//     res.render('testing/musicplayer.ejs', {
+//     });
+//   });
 
-app.get('/test', function(req, res) {
-    res.render('landing/test', {
-    });
-  });
+// app.get('/test', function(req, res) {
+//     res.render('landing/test', {
+//     });
+//   });
 
   //LANDING PAGE
-  app.get('/proto1', function(req, res) {
-    res.render('landing/proto1', {
-    });
-  });
+//   app.get('/proto1', function(req, res) {
+//     res.render('landing/proto1', {
+//     });
+//   });
   
-  app.get('/mixer', function(req, res) {
-    res.render('landing/mixer', {
-    });
-  });
-  app.get('/sdeck', function(req, res) {
-    res.render('landing/sdeck', {
-    });
-  });
+//   app.get('/mixer', function(req, res) {
+//     res.render('landing/mixer', {
+//     });
+//   });
+//   app.get('/sdeck', function(req, res) {
+//     res.render('landing/sdeck', {
+//     });
+//   });
 
 
 app.use(express.json())

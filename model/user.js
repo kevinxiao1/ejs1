@@ -6,12 +6,18 @@ var connection = mysql.createConnection({
     password : '',
     database : 'livebuddy'
   });
-   try {
-    connection.connect();
-    console.log('connected')
-   } catch (error) {
-       console.log(error)
-   }
+
+function checkConnection() {
+    if (connection.state === 'disconnected') {
+        connection.connect()
+    }
+}
+//    try {
+//     connection.connect();
+//     console.log('connected')
+//    } catch (error) {
+//        console.log(error)
+//    }
 
 //    try {
 //     connection.query({
@@ -29,4 +35,6 @@ var connection = mysql.createConnection({
 //    } catch (error) {
 //        console.log(error)
 //    }
-   module.exports = connection;
+   //module.exports = connection;
+   exports.connection = connection;
+   exports.checkConnection = checkConnection;

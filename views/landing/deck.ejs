@@ -3,8 +3,19 @@
     <head>
         <%- include('./head'); %>
         <%- include('../webaudioapi/webaudiojs'); %> 
+        <% if (email) 
+            console.log('welcome ' + email)
+        %> 
+        <% if (data) { %>
+            <script>
+                var data = '<%-JSON.stringify(data)%>'
+                var btndata = data;
+                console.log('ur button data is : ' + btndata)
+            </script>
+        <%}%>
+         
     </head>
-<body">
+<body>
     <canvas id="visualizer"></canvas>
 <div class="container">
     
@@ -19,6 +30,9 @@
             <li id="mixer" onclick="redirect('mixer')"><a href="mixer">Mixer</a></li> -->
           </ul>
         </div>
+        <form action="/logout?_method=DELETE" method="post">
+            <button class="w3-button w3-yellow w3-padding-large w3-large w3-margin-top" type="submit">Log Out</button>
+        </form>
     </nav>
 
     
@@ -61,7 +75,7 @@
                     <input type="text" name="sname" id="sname" value="" hidden />
                     <input type="text" name="stype" id="stype" value="" hidden />
                     <div class="col s4 m4 l4">
-                        <button type="submit" class="waves-effect waves-light" id="transbutton" onclick="addscene()">add transition</button>
+                        <button type="submit" name="submit" class="waves-effect waves-light" value="adddeck" id="transbutton" onclick="addscene()">add transition</button>
                     </div>
                     
                 </form>
@@ -83,7 +97,7 @@
                     </select>
                 </div>
                 <div class="col s4 m4 l4">
-                    <button class="waves-effect waves-light" id="mediabutton" onclick="addmedia()" disabled>add media play</button>
+                    <button type="submit" name="submit" class="waves-effect waves-light" value="adddeck" id="mediabutton" onclick="addmedia()" disabled>add media play</button>
                 </div>
             </div>
             <div class="row">
@@ -113,8 +127,10 @@
         <div class="w3-content">
             <h1>Deck Prototype</h1>
             <h5 class="w3-padding-32"></h5>
+            <form action="/deck" method="post">
             <div class="row">
-                <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="streamstart()">Start Stream</a></div>
+                
+                <div class="col s4 m4 l4"><button type="submit" name="submit" value="startstream" class="waves-effect waves-light btn-large ww" onclick="streamstart()">Start Stream</button></div>
                 <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="streamstop()">Stop Stream</a></div>
                 <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="togglemic()">toggle mic</a></div>
             </div>
@@ -129,6 +145,7 @@
                 <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="end()">ending</a></div>
             </div>
             <p class="w3-text-grey">This is a deck prototype
+            </form>
         </div>
     </div>
 
@@ -296,6 +313,8 @@
 
             
             <!-- starting to build the planned audio mixer -->
+            <h2>Add Effect</h2>
+            <br>
             <select class="browser-default" id="effect_list">
                 <option name="effectvalue" id="effectvalue" value="" disabled>add effects to your microphone input</option>
                 <option name="effectvalue" id="effectvalue" value="reverb">reverb</option>
@@ -304,7 +323,7 @@
                 <option name="effectvalue" id="effectvalue" value="distortion">distortion</option>
                 <option name="effectvalue" id="effectvalue" value="delay">delay</option>
             </select>
-
+            <br>
             <button onclick="addeffect()">add effect</button>
 
             <div id="mixerPad"></div>
@@ -332,40 +351,56 @@
                 step="1"
                 value="0"
             />
-            <span class="dist_value">0</span>
+            <span id="dist_value">0</span>
 
             <h2>Set Delay</h2>
-
-            <label for="delay_control">Delay</label>
-            <input
-                id="delay_control"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0"
-            />
-            <span class="delay_value">0</span>
-
-            <label for="feedback_control">Feedback</label>
-            <input
-                id="feedback_control"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0"
-            />
-            <span class="feedback_value">0</span>
-
+            
+            <div class="row">
+                <div class="col s2">
+                    <label for="delay_control">Delay</label>
+                </div>
+                <div class="col s8">
+                    <input
+                    id="delay_control"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0"
+                    />
+                </div>
+                <div class="col s2">
+                    <span class="delay_value">0</span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col s2">
+                    <label for="feedback_control">Feedback</label>
+                </div>
+                <div class="col s8">
+                    <input
+                    id="feedback_control"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0"
+                    />
+                </div>
+                <div class="col s2">
+                    <span class="feedback_value">0</span>
+                </div>
+            </div>
+            
             <button id="btnDelay" onclick="toggleDelay()">activate delay</button>
 
             <h2>Play from file</h2>
-            <button>select file</button>
+            <!-- <button>select file</button> -->
 
-            <label for="audioFileChooser">Upload an audio file: </label><br><br>
+            <!-- <label for="audioFileChooser">Upload an audio file: </label><br><br> -->
             <input  id="audioFileChooser" type="file" onchange="readFile(this.files);">
-
+            <div id="fileplayer"></div>
             <script>
                 
             </script>
@@ -427,6 +462,7 @@
 </body>
 <!-- <script src="/javascript/audio.js"></script> -->
 <script src="/javascript/webaudioapi.js"></script>
+
 <script>
     if (flvjs.isSupported()) {
         var videoElement = document.getElementById('videoElement');
@@ -438,5 +474,7 @@
         flvPlayer.load();
         flvPlayer.play();
     }
+
+    readData(btndata)
 </script>
 </html>

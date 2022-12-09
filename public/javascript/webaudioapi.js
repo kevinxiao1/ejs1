@@ -83,16 +83,11 @@ function makeDistortionCurve(k) {
   });
   return curve;
 }
-
 dist.curve = makeDistortionCurve(0)
-
 distControl.oninput = () => {
     dist.curve = makeDistortionCurve(distControl.value)
-    console.log(distControl.value)
+    distValue.textContent = distControl.value
 }
-
-
-
 
 function toggleDelay() {
     
@@ -124,6 +119,31 @@ function playAudioFile(file) {
                 source.loop = false;
                 source.connect(context.destination);
                 source.start(0); 
+
+            var btnplay = document.createElement('button');
+            var btnstop = document.createElement('button');
+            var parent = document.getElementById('fileplayer')
+
+            btnplay.textContent = "pause"
+            btnstop.textContent = "stop"
+
+            btnplay.onclick = () => {
+                if (context.state === "running") {
+                    context.suspend().then(() => {
+                    btnplay.textContent = "play";
+                  });
+                } else if (context.state === "suspended") {
+                    context.resume().then(() => {
+                    btnplay.textContent = "pause";
+                  });
+                }
+              };
+              btnstop.onclick = () => {
+                context.close()
+                btnplay.textContent = "play";
+              }
+              parent.appendChild(btnplay)
+              parent.appendChild(btnstop)
         });
 }
 
@@ -178,7 +198,7 @@ async function setupContext(){
             .connect(gainNode)
             .connect(analyserNode)
             .connect(panNode)
-            // .connect(dist)
+            .connect(dist)
             // .connect(delay)
             // .connect(reverbNode)
             .connect(context.destination)
@@ -313,12 +333,24 @@ function addeffect() {
         //     />
         //     <span class="panning_value">0</span>
         try {
+            const container = document.createElement('div')
+            container.classList.add("row")
+            const spandiv = document.createElement('div')
+            spandiv.classList.add("col", "s2")
+            const spandiv2 = document.createElement('div')
+            spandiv2.classList.add("col", "s2")
+            const inputdiv = document.createElement('div')
+            inputdiv.classList.add("col", "s8")
             const header = document.createElement('h2')
             const span = document.createElement('span')
             span.textContent = '0'
             span.setAttribute('id', 'panning_value')
             header.textContent = 'Stereo Panner'
 
+            const spanleft = document.createElement('span')
+            spanleft.textContent = 'left'
+            const spanright = document.createElement('span')
+            spanright.textContent = 'right'
             const input = document.createElement('input')
             setAttributes(input, {
                 "id" :"panning_control",
@@ -329,10 +361,16 @@ function addeffect() {
                 "value" :"0",
                 "oninput" : "pannerchange()"
             })
-
+ 
+            container.appendChild(spandiv)
+            spandiv.appendChild(spanleft)
+            container.appendChild(inputdiv)
+            inputdiv.appendChild(input)
+            container.appendChild(spandiv2)
+            spandiv2.appendChild(spanright)
 
             parent.appendChild(header)
-            parent.appendChild(input)
+            parent.appendChild(container)
             parent.appendChild(span)
             mixerPad.appendChild(parent)
 
@@ -497,3 +535,7 @@ function setAttributes(el, attrs) {
       el.setAttribute(key, attrs[key]);
     }
   }
+
+
+//DATABASE
+

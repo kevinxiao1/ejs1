@@ -1,5 +1,6 @@
 const localStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt');
+const connection = require('./model/user');
 const con = require('./model/user');
 
  function initialize(passport) {
@@ -23,7 +24,8 @@ const con = require('./model/user');
         // } catch (error) {
         //     return done(error)
         // }
-        const user = con.query("SELECT * FROM `user` WHERE `email` = '" + email + "'",async function(err,rows){
+        con.connection.connect()
+        const user = con.connection.query("SELECT * FROM `user` WHERE `email` = '" + email + "'",async function(err,rows){
 			if (err)
                 return done(err);
 			 if (!rows.length) {
@@ -38,6 +40,7 @@ const con = require('./model/user');
 			
             // all is well, return successful user
             return done(null, rows[0]);			
+
 		});
 		
     }
