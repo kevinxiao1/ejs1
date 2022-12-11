@@ -87,11 +87,36 @@ router.route('/deck', checkNotAuthenticated)
 
         })
       } else if(submit === "startstream"){
-        var sql = "SELECT * FROM `user_btn` WHERE email ='" + req.user.email + "'"
+        var streamstarttime = req.body.streamstarttime
+            console.log("starttime : " + streamstarttime)
+
+        
+      } else if(submit === "stopstream"){
+        var streamstoptime = req.body.streamstoptime
+        var streamstarttime = req.body.streamstarttime
+        // var streamduration = req.body.streamduration
+        // console.log(streamduration)
+        
+
+        var streamstop = new Date(streamstoptime)
+        var streamstart = new Date(streamstarttime)
+        console.log(streamstop + "  " + streamstart)
+
+        var diffMs = (streamstop - streamstart); // milliseconds between now & Christmas
+        var diffDays = Math.floor(diffMs / 86400000); // days
+        var diffHrs = Math.floor((diffMs % 86400000) / 3600000); // hours
+        var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+        var diffsec = Math.round((((diffMs % 86400000) % 3600000) % 60000) / 1000); // seconds
+        var streamduration = (diffHrs + " hours, " + diffMins + " minutes, " + diffsec + " seconds");
+        console.log(streamduration)
+
+
+        var sql = "INSERT INTO report(email, report_type, start_date, stop_date, duration) VALUES('" + req.user.email + "', '" + "0" + "', '" + streamstarttime + "', '" + streamstoptime + "', '" + streamduration + "')";
         con.connection.query(sql, function (err, result, fields) {
             if (err) throw err;
-            console.log("startstream");
+            console.log("stream report saved!");
         })
+
       }
     
     res.status(204).send();

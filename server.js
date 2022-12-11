@@ -1,5 +1,7 @@
 const process = require('process')
 
+const PORT = process.env.PORT || 3000;
+
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -36,7 +38,7 @@ app.use(flash())
 app.set('trust proxy', 1)
 app.use(session({
     key : 'session_cookie_name',
-    secret : process.env["SESSION_SECRET"],
+    secret : process.env["NODE_ENV"],
     // store : sessionStore,
     resave : false,
     saveUninitialized : false,
@@ -173,8 +175,12 @@ app.use(userRouter)
 app.use(deckRouter)
 app.use(adminRouter)
 
-app.listen(8080);
-console.log('Server is listening on port 8080');
+// app.listen(8080);
+// console.log('Server is listening on port 8080');
+
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+  });
 
 // RTMP SERVER
 

@@ -100,10 +100,8 @@
                     <button type="submit" name="submit" class="waves-effect waves-light" value="adddeck" id="mediabutton" onclick="addmedia()" disabled>add media play</button>
                 </div>
             </div>
-            <div class="row">
-                
-            </div>
-                
+            
+
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="streamstop()">Stop Stream</a></div> -->
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="togglemic()">toggle mic</a></div> -->
             <div class="row" id="deckadd">
@@ -112,10 +110,37 @@
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div> -->
             </div>
             <div class="row">
+                <button >delete buttons</button>
+            </div>
+            <div class="row">
                 <!-- <div><button onclick="createButton()">create</button></div> -->
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="punch()">punch</a></div> -->
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="etu()">ETU</a></div> -->
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="end()">ending</a></div> -->
+            <div class="w3-content">
+                <h1>Deck Prototype</h1>
+                <form action="/deck" method="post">
+                    <div class="row">
+                        <input id="streamstarttime" hidden="true" name="streamstarttime" value="start">
+                        <div class="col s4 m4 l4"><button type="submit" name="submit" value="startstream" class="waves-effect waves-light btn-large ww" onclick="streamstart()">Start Stream</button></div>
+                        <input id="streamstoptime" hidden="true" name="streamstoptime" value="stop">
+                        <input id="streamduration" hidden="true" name="streamduration" value="duration">
+                        <div class="col s4 m4 l4"><button type="submit" name="submit" value="stopstream" class="waves-effect waves-light btn-large ww" onclick="streamstop()">Stop Stream</a></div>
+                        <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="togglemic()">toggle mic</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col s4 m4 l4"><a id="rec" class="waves-effect waves-light btn-large ww" onclick="recstart()"> Record</a></div>
+                        <div class="col s4 m4 l4" onclick="recstop()"><a class="waves-effect waves-light btn-large ww">Stop Record</a></div>
+                        <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="punch()">punch</a></div>
+                        <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="etu()">ETU</a></div>
+                        <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="end()">ending</a></div>
+                    </div>
+                    <p class="w3-text-grey">This is a deck prototype
+                </form>
+            </div>
             </div>
         </div>
             
@@ -127,25 +152,25 @@
         <div class="w3-content">
             <h1>Deck Prototype</h1>
             <h5 class="w3-padding-32"></h5>
-            <form action="/deck" method="post">
-            <div class="row">
-                
-                <div class="col s4 m4 l4"><button type="submit" name="submit" value="startstream" class="waves-effect waves-light btn-large ww" onclick="streamstart()">Start Stream</button></div>
-                <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="streamstop()">Stop Stream</a></div>
-                <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="togglemic()">toggle mic</a></div>
-            </div>
-            <div class="row">
-                <div class="col s4 m4 l4"><a id="rec" class="waves-effect waves-light btn-large ww" onclick="recstart()"> Record</a></div>
-                <div class="col s4 m4 l4" onclick="recstop()"><a class="waves-effect waves-light btn-large ww">Stop Record</a></div>
-                <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div>
-            </div>
-            <div class="row">
-                <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="punch()">punch</a></div>
-                <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="etu()">ETU</a></div>
-                <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="end()">ending</a></div>
-            </div>
-            <p class="w3-text-grey">This is a deck prototype
-            </form>
+            <!-- <form action="/deck" method="post">
+                <div class="row">
+                    
+                    <div class="col s4 m4 l4"><button type="submit" name="submit" value="startstream" class="waves-effect waves-light btn-large ww" onclick="streamstart()">Start Stream</button></div>
+                    <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="streamstop()">Stop Stream</a></div>
+                    <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="togglemic()">toggle mic</a></div>
+                </div>
+                <div class="row">
+                    <div class="col s4 m4 l4"><a id="rec" class="waves-effect waves-light btn-large ww" onclick="recstart()"> Record</a></div>
+                    <div class="col s4 m4 l4" onclick="recstop()"><a class="waves-effect waves-light btn-large ww">Stop Record</a></div>
+                    <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div>
+                </div>
+                <div class="row">
+                    <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="punch()">punch</a></div>
+                    <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="etu()">ETU</a></div>
+                    <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="end()">ending</a></div>
+                </div>
+                <p class="w3-text-grey">This is a deck prototype
+            </form> -->
         </div>
     </div>
 

@@ -331,23 +331,17 @@
         var dateend;
         function getDateFormat(timestamp) {
             var newtimestamp = new Date(timestamp)
-            var date = newtimestamp.getDate() + "/"+(newtimestamp.getMonth()+1)+
-           "/"+newtimestamp.getFullYear()+
-           " "+newtimestamp.getHours()+
-           ":"+newtimestamp.getMinutes()+
-           ":"+newtimestamp.getSeconds()
+            var date = newtimestamp.getUTCFullYear() + '-' +
+            ('00' + (newtimestamp.getUTCMonth()+1)).slice(-2) + '-' +
+            ('00' + newtimestamp.getUTCDate()).slice(-2) + ' ' + 
+            ('00' + newtimestamp.getUTCHours()).slice(-2) + ':' + 
+            ('00' + newtimestamp.getUTCMinutes()).slice(-2) + ':' + 
+            ('00' + newtimestamp.getUTCSeconds()).slice(-2);
             return date;
-        //     const timestop = timestampstop.getDate() + "/"+(timestampstop.getMonth()+1)+
-        //    "/"+timestampstop.getFullYear()+
-        //    " "+timestampstop.getHours()+
-        //    ":"+timestampstop.getMinutes()+
-        //    ":"+timestampstop.getSeconds();
-
-        //    console.log(timestart)
-        //    console.log(timestop)
         }
         // Stream Start and Stop
         function streamstart() {
+            var starttime = document.getElementById("streamstarttime")
             obs.sendCallback('StartStreaming', (error) => {
             // Code here...
                 console.log('stream started')
@@ -357,10 +351,12 @@
             });
             timestampstart = Date.now()
             datestart = getDateFormat(timestampstart);
+            starttime.value = datestart;
             console.log(datestart)
 
         }
         function streamstop() {
+            var stoptime = document.getElementById("streamstoptime")
             obs.sendCallback('StopStreaming', (error) => {
             // Code here...
                 console.log('stream stopped')
@@ -371,10 +367,17 @@
             timestampstop = Date.now()
             streamStamp()
             dateend = getDateFormat(timestampstop);
+            stoptime.value = dateend;
+            console.log(dateend)
         }
         function streamStamp() {
             obs.send('GetStreamingStatus').then(data =>{
-                console.log(data.streamTimecode)
+                //console.log(typeof data.streamTimecode)
+                var streamdurationvalue = String(data.streamTimecode)
+                var streamduration = document.getElementById('streamduration')
+                streamduration.value = streamdurationvalue
+                console.log(typeof streamduration.value)
+                console.log("duration : " + streamduration.value);
             })
             obs.on('error', err => {
                 console.error('socket error:', err);
@@ -680,6 +683,10 @@
             div.appendChild(sceneButton);
             btncount = btncount + 1;
             alert(btncount)
+        }
+
+        function deleteToggle() {
+            console.log('delete Toggle')
         }
 
 
