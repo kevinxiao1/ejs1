@@ -1,7 +1,7 @@
 <title>Prototype</title>
     <meta charset="UTF-8">
         <script src="/javascript/bundle.js"></script>
-        <script src="/javascript/abundle.js"></script>
+        <!-- <script src="/javascript/abundle.js"></script> -->
         <script defer>
             var OBSWebSocket = require('obs-websocket-js')
             var express = require('express')
@@ -230,14 +230,14 @@
 
         // SCENE SWITCHER -------------------------------
         function obscon() {
-            // const ipaddress = document.getElementById('ipaddress').value
-            // const password = document.getElementById('password').value;
+            const ipaddress = document.getElementById('ipaddress').value
+            const password = document.getElementById('password').value;
             
             obs.connect({
-                // address: ipaddress + ':4444',
-                // password: password
-                address: '192.168.50.210:4444',
-                password: 'kw912049'
+                address: ipaddress + ':4444',
+                password: password
+                // address: '192.168.50.210:4444',
+                // password: 'kw912049'
             })
             .catch(err => { // Promise convention dicates you have a catch on every chain.
                 // log.error('Connection or Authentication failed', err);

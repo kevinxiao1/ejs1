@@ -52,7 +52,7 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
         //     email: email,
         //     password: password,
         // })
-        con.checkConnection()
+        con.connection.connect()
         var sql = "SELECT * FROM `user` WHERE `email` = '" + email + "'";
         con.connection.query(sql, function (err, result, fields) {
             if (err) throw err;
@@ -84,13 +84,13 @@ router.post('/register', checkNotAuthenticated, async (req, res) => {
                         console.log("button generated");
                     }
                 }
-                con.connection.end();
+                //con.connection.end();
                 res.redirect('/login');
             }
         });
 
     } catch (error) {
-        connection.end()
+        //connection.end()
         res.redirect('/register');
         console.log(error)
     }
