@@ -121,16 +121,19 @@
                 <h1>Deck Prototype</h1>
                 <form action="/deck" method="post">
                     <div class="row">
-                        <input id="streamstarttime" hidden="true" name="streamstarttime" value="start">
                         <div class="col s4 m4 l4"><button type="submit" name="submit" value="startstream" class="waves-effect waves-light btn-large ww" onclick="streamstart()">Start Stream</button></div>
+                        <input id="streamstarttime" hidden="true" name="streamstarttime" value="start">
                         <input id="streamstoptime" hidden="true" name="streamstoptime" value="stop">
                         <input id="streamduration" hidden="true" name="streamduration" value="duration">
                         <div class="col s4 m4 l4"><button type="submit" name="submit" value="stopstream" class="waves-effect waves-light btn-large ww" onclick="streamstop()">Stop Stream</a></div>
                         <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="togglemic()">toggle mic</a></div>
                     </div>
                     <div class="row">
-                        <div class="col s4 m4 l4"><a id="rec" class="waves-effect waves-light btn-large ww" onclick="recstart()"> Record</a></div>
-                        <div class="col s4 m4 l4" onclick="recstop()"><a class="waves-effect waves-light btn-large ww">Stop Record</a></div>
+                        <input id="recordstarttime" hidden="true" name="recordstarttime" value="start">
+                        <input id="recordstoptime" hidden="true" name="recordstoptime" value="stop">
+                        <input id="recorduration" hidden="true" name="recorduration" value="duration">
+                        <div class="col s4 m4 l4"><button id="rec" type="submit" name="submit" value="startrecord" class="waves-effect waves-light btn-large ww" onclick="recstart()"> Record</button></div>
+                        <div class="col s4 m4 l4" onclick="recstop()"><button type="submit" name="submit" value="stoprecord" class="waves-effect waves-light btn-large ww">Stop Record</button></div>
                         <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div>
                     </div>
                     <div class="row">

@@ -24,7 +24,7 @@ const con = require('./model/user');
         // } catch (error) {
         //     return done(error)
         // }
-        con.connection.connect()
+        //con.connection.connect()
         const user = con.connection.query("SELECT * FROM `user` WHERE `email` = '" + email + "'",async function(err,rows){
 			if (err)
                 return done(err);

@@ -117,7 +117,17 @@ function playAudioFile(file) {
                 source = context.createBufferSource();
                 source.buffer = buffer;
                 source.loop = false;
-                source.connect(context.destination);
+                source
+                    .connect(bassEQ)
+                    .connect(midEQ)
+                    .connect(trebleEQ)
+                    .connect(gainNode)
+                    .connect(analyserNode)
+                    .connect(panNode)
+                    .connect(dist)
+                    // .connect(delay)
+                    // .connect(reverbNode)
+                    .connect(context.destination)
                 source.start(0); 
 
             var btnplay = document.createElement('button');

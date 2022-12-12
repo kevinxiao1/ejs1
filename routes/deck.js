@@ -118,6 +118,12 @@ router.route('/deck', checkNotAuthenticated)
         })
 
       }
+      else if (submit === "startrec") {
+        console.log('startrec')
+      }
+      else if (submit === "stoprec") {
+        console.log('stoprec')
+      }
     
     res.status(204).send();
     //con.connection.end();
