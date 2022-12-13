@@ -111,24 +111,28 @@ function readFile(files) {
             console.log(("Filename: '" + files[0].name + "'"), ( "(" + ((Math.floor(files[0].size/1024/1024*100))/100) + " MB)" ));
         }
 }
-function playAudioFile(file) {
+
+var filesource;
+async function playAudioFile(file) {
     //var context = new window.AudioContext();
+    await context.resume()
+    console.log('decoding')
         context.decodeAudioData(file, function(buffer) {
-                source = context.createBufferSource();
-                source.buffer = buffer;
-                source.loop = false;
-                source
-                    .connect(bassEQ)
-                    .connect(midEQ)
-                    .connect(trebleEQ)
-                    .connect(gainNode)
-                    .connect(analyserNode)
-                    .connect(panNode)
-                    .connect(dist)
-                    // .connect(delay)
-                    // .connect(reverbNode)
-                    .connect(context.destination)
-                source.start(0); 
+            filesource = context.createBufferSource();
+            filesource.buffer = buffer;
+            filesource.loop = false;
+            filesource
+            .connect(bassEQ)
+            .connect(midEQ)
+            .connect(trebleEQ)
+            .connect(gainNode)
+            //.connect(analyserNode)
+            .connect(panNode)
+            .connect(dist)
+            //.connect(delay)
+            //.connect(reverbNode)
+            .connect(context.destination)
+            filesource.start(0); 
 
             var btnplay = document.createElement('button');
             var btnstop = document.createElement('button');
@@ -202,15 +206,15 @@ async function setupContext(){
 
         source = context.createMediaStreamSource(mic)
         source
-            .connect(bassEQ)
-            .connect(midEQ)
-            .connect(trebleEQ)
-            .connect(gainNode)
-            .connect(analyserNode)
-            .connect(panNode)
-            .connect(dist)
+            // .connect(bassEQ)
+            // .connect(midEQ)
+            // .connect(trebleEQ)
+            // .connect(gainNode)
+            //.connect(analyserNode)
+            //.connect(panNode)
+            //.connect(dist)
             // .connect(delay)
-            // .connect(reverbNode)
+            //.connect(reverbNode)
             .connect(context.destination)
     
 }
@@ -229,16 +233,18 @@ function addcompress() {
         compress.innerHTML = 'Remove compression'
         // compressor.connect(context.destination)
 
-        source.connect(compressor);
+        filesource.connect(compressor);
         compressor.connect(context.destination);
         //reverbNode.connect(compressor).connect(context.destination)
       } else {
         compress.setAttribute('active', 'false')
         console.log('compress removedF')
         compress.innerHTML = 'Add compression'
+        filesource.disconnect(compressor)
         // source.disconnect(compressor);
         compressor.disconnect(context.destination);
-        source.connect(context.destination);
+
+        //source.connect(context.destination);
         
       //   reverbNode.disconnect(compressor)
       //   reverbNode.connect(context.destination)
@@ -385,7 +391,7 @@ function addeffect() {
             mixerPad.appendChild(parent)
 
             panNode.connect(context.destination)
-            source.connect(panNode)
+            filesource.connect(panNode)
 
             console.log('pannercomplete')
         } catch (error) {
@@ -446,9 +452,9 @@ function reverbToggle() {
         if (value == 'AbernyteGrainSilo') {
             var reverbUrl = "http://reverbjs.org/Library/AbernyteGrainSilo.m4a";
             reverbNode = context.createSourceFromUrl(reverbUrl, function() {
-                reverbNode.connect(context.destination);
+                reverbNode.connect(context.destination)
             });
-            source.connect(reverbNode)
+            //source.connect(context.destination)
             console.log('silo')
         }
         else if (value == 'HamiltonMausoleum') {
@@ -456,14 +462,14 @@ function reverbToggle() {
             reverbNode = context.createSourceFromUrl(reverbUrl, function() {
                 reverbNode.connect(context.destination);
             });
-            source.connect(reverbNode)
+            //source.connect(reverbNode)
             console.log('Mausoleum')
         }
         btn.textContent = "Turn off"
     }
     else {
         
-        source.disconnect(context.destination)
+        //filesource.disconnect(reverbNode)
         //source.resume()
         btn.textContent = "Turn on"
     }
@@ -496,10 +502,10 @@ async function btnOutList(evt) {
 
 //DELAY
 var delay = context.createDelay();
-delay.delayTime.value = 0.4;
+delay.delayTime.value = 0;
 
 const feedback = context.createGain();
-feedback.gain.value = 0.3;
+feedback.gain.value = 0;
 
 const delayControl = document.getElementById('delay_control')
 const feedbackControl = document.getElementById('feedback_control')

@@ -110,7 +110,7 @@
                 <!-- <div class="col s4 m4 l4"><a class="waves-effect waves-light btn-large ww" onclick="vsauce()">V-sauce</a></div> -->
             </div>
             <div class="row">
-                <button >delete buttons</button>
+                <!-- <button >delete deck mode</button> -->
             </div>
             <div class="row">
                 <!-- <div><button onclick="createButton()">create</button></div> -->
@@ -358,16 +358,17 @@
 
             <button id="btnOutList" onclick="btnOutList()">get list of outputs</button>
 
-            <!-- <h2>Set stereo panning</h2>
+            <h2>Set stereo panning</h2>
             <input
-                class="panning_control"
+                id="panning_control"
                 type="range"
                 min="-1"
                 max="1"
                 step="0.1"
                 value="0"
+                oninput="pannerchange()"
             />
-            <span class="panning_value">0</span> -->
+            <span class="panning_value">0</span>
 
             <h2>Set distortion</h2>
 
@@ -381,7 +382,7 @@
             />
             <span id="dist_value">0</span>
 
-            <h2>Set Delay</h2>
+            <!-- <h2>Set Delay</h2>
             
             <div class="row">
                 <div class="col s2">
@@ -421,7 +422,7 @@
                 </div>
             </div>
             
-            <button id="btnDelay" onclick="toggleDelay()">activate delay</button>
+            <button id="btnDelay" onclick="toggleDelay()">activate delay</button> -->
 
             <h2>Play from file</h2>
             <!-- <button>select file</button> -->
