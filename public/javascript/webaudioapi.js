@@ -28,7 +28,7 @@ if (!navigator.mediaDevices?.enumerateDevices) {
 
 
 //BASIC MIC SETUP AND EQ
-const context = new AudioContext()
+const context = new (window.AudioContext || window.webkitAudioContext)()
 reverbjs.extend(context);
 let panNode = new StereoPannerNode(context)
 
@@ -122,17 +122,18 @@ async function playAudioFile(file) {
             filesource.buffer = buffer;
             filesource.loop = false;
             filesource
-            .connect(bassEQ)
-            .connect(midEQ)
-            .connect(trebleEQ)
-            .connect(gainNode)
-            //.connect(analyserNode)
-            .connect(panNode)
-            .connect(dist)
-            //.connect(delay)
-            //.connect(reverbNode)
-            .connect(context.destination)
+                .connect(bassEQ)
+                .connect(midEQ)
+                .connect(trebleEQ)
+                .connect(gainNode)
+                //.connect(analyserNode)
+                .connect(panNode)
+                .connect(dist)
+                // .connect(delay)
+                //.connect(reverbNode)
+                .connect(context.destination);
             filesource.start(0); 
+
 
             var btnplay = document.createElement('button');
             var btnstop = document.createElement('button');
@@ -198,24 +199,32 @@ function getMic(){
     })
 }
 var source;
+var reverbUrl = "http://reverbjs.org/Library/AbernyteGrainSilo.m4a";
+            reverbNode = context.createSourceFromUrl(reverbUrl, function() {
+                reverbNode.connect(context.destination)
+});
 async function setupContext(){
     console.log('getting mic')
     const mic = await getMic()
         await context.resume()
+        
+        
 
 
         source = context.createMediaStreamSource(mic)
         source
-            // .connect(bassEQ)
-            // .connect(midEQ)
-            // .connect(trebleEQ)
-            // .connect(gainNode)
+            
+            .connect(bassEQ)
+            .connect(midEQ)
+            .connect(trebleEQ)
+            .connect(gainNode)
             //.connect(analyserNode)
-            //.connect(panNode)
-            //.connect(dist)
+            .connect(panNode)
+            .connect(dist)
             // .connect(delay)
             //.connect(reverbNode)
             .connect(context.destination)
+            
     
 }
 

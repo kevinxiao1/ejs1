@@ -283,10 +283,15 @@
             </div> -->
 
             <!-- The basic hard coded functions -->
-            <button id="susresBtn" onclick="susres()">Resume Context</button>
-            <div class="col s12">
-                <button class="waves-effect waves-light fplay" id="openMic" onclick="setupContext()">open mic</button>
-            </div>
+            <!-- <button id="susresBtn" onclick="susres()">Resume Context</button> -->
+            <h2>Play from file</h2>
+            <!-- <button>select file</button> -->
+
+            <!-- <label for="audioFileChooser">Upload an audio file: </label><br><br> -->
+            <input  id="audioFileChooser" type="file" onchange="readFile(this.files);">
+            <div id="fileplayer"></div>
+
+            
             <div class="col s12">
                 <label for="volume">Volume</label>
                 <input type="range" id="volume" min="0" max="1" value=".5" step=".01">
@@ -341,7 +346,7 @@
 
             
             <!-- starting to build the planned audio mixer -->
-            <h2>Add Effect</h2>
+            <!-- <h2>Add Effect</h2>
             <br>
             <select class="browser-default" id="effect_list">
                 <option name="effectvalue" id="effectvalue" value="" disabled>add effects to your microphone input</option>
@@ -356,7 +361,7 @@
 
             <div id="mixerPad"></div>
 
-            <button id="btnOutList" onclick="btnOutList()">get list of outputs</button>
+            <button id="btnOutList" onclick="btnOutList()">get list of outputs</button> -->
 
             <h2>Set stereo panning</h2>
             <input
@@ -368,7 +373,7 @@
                 value="0"
                 oninput="pannerchange()"
             />
-            <span class="panning_value">0</span>
+            <span id="panning_value">0</span>
 
             <h2>Set distortion</h2>
 
@@ -381,6 +386,10 @@
                 value="0"
             />
             <span id="dist_value">0</span>
+
+            <div class="col s12">
+                <button class="waves-effect waves-light fplay" id="openMic" onclick="setupContext()">open mic</button>
+            </div>
 
             <!-- <h2>Set Delay</h2>
             
@@ -424,12 +433,7 @@
             
             <button id="btnDelay" onclick="toggleDelay()">activate delay</button> -->
 
-            <h2>Play from file</h2>
-            <!-- <button>select file</button> -->
-
-            <!-- <label for="audioFileChooser">Upload an audio file: </label><br><br> -->
-            <input  id="audioFileChooser" type="file" onchange="readFile(this.files);">
-            <div id="fileplayer"></div>
+            
             <script>
                 
             </script>
